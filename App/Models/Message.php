@@ -10,7 +10,7 @@ class Message extends Model
     protected null|int $id = null;
     protected string $author;
     protected ?string $recipient;
-    protected string $created;
+    protected ?string $created;
     protected string $message;
 
     public function getId(): int

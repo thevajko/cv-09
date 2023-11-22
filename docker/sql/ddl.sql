@@ -7,9 +7,9 @@ create table logins
 create table messages
 (
     id        int auto_increment primary key,
-    recipient text null,
+    recipient text default null,
     author    text not null,
-    created   datetime null,
+    created   datetime default null,
     message   text not null
 );
 

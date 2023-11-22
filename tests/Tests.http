@@ -325,7 +325,7 @@ Cookie: {{session2}}
 }
 
 > {%
-    client.test("User 1 sending global message", function(){
+    client.test("User sends public message", function(){
         client.assert(response.status == 204, "There is not 204 status in response")
         client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
     })
@@ -446,7 +446,7 @@ Cookie: {{session1}}
 
 
 > {%
-    client.test("Getting all messages", function(){
+    client.test("Get all messages", function(){
         client.assert(response.status == 200, "There is not 200 status in response")
         client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
 
