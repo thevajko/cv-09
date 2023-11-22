@@ -21,7 +21,7 @@ class TestApiController extends AControllerBase
 
 
     /**
-     * This action shifts datetime of last activity do the set count of minutes (can be negative)
+     * This action shifts datetime of last activity to the defined number of minutes (can be negative)
      * @return EmptyResponse
      * @throws \Exception
      */
