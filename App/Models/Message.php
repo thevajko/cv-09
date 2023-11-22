@@ -13,7 +13,6 @@ class Message extends Model
     protected string $created;
     protected string $message;
 
-
     public function getId(): int
     {
         return $this->id;
@@ -23,6 +22,7 @@ class Message extends Model
     {
         $this->id = $id;
     }
+
     public function getAuthor(): string
     {
         return $this->author;
@@ -40,7 +40,7 @@ class Message extends Model
 
     public function setCreated(DateTime $created): void
     {
-        $this->created = $created->format( 'Y-m-d H:i:s');
+        $this->created = $created->format('Y-m-d H:i:s');
     }
 
     public function getRecipient(): string
@@ -62,6 +62,4 @@ class Message extends Model
     {
         $this->message = $message;
     }
-
-
 }

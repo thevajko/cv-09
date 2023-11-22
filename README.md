@@ -1,4 +1,4 @@
- VAII Cvičenie 09
+VAII Cvičenie 09
 
 Momentálne je otvorená vetva __MAIN__, ktorá obsahuje _štartér_. Riešenie obsahuje vetva __SOLUTION__.
 
@@ -7,10 +7,12 @@ Momentálne je otvorená vetva __MAIN__, ktorá obsahuje _štartér_. Riešenie 
 Cieľom tohto cvičenia je vytvoriť __webové API__ k serverovej časti chatovacej aplikácie s použitím [frameworku vajiíčko](https://github.com/thevajko/vaiicko).
 Samotný chat budeme vytvárať na ďalšom cvičení.
 
-1. Preštudujte si súbory v štartéri. V adresári `docker\sql` sa nachádza súbor `ddl.sql`, ktorý Vám vytvorí DB tabuľky, potrebné pre tento projekt. Takisto
-   štartér obsahuje Vaííčko framework. Projekt obsahuje aj `SimpleAuthenticator` na jednoduché overenie mena a hesla. V projekte sa takisto nachádzajú aj
-   pripravené kontroléry `AuthApiController` a `MessageApiController`. V nich budete implementovať jednotlivé akcie.
-2. `AuthApiController` - má na starosti operácie týkajúce sa používateľa a informácií o ňom. Obsahuje nasledovné akcie:
+Preštudujte si súbory v štartéri. V adresári `docker\sql` sa nachádza súbor `ddl.sql`, ktorý Vám vytvorí DB tabuľky, potrebné pre tento projekt. Takisto
+štartér obsahuje Vaííčko framework. Projekt obsahuje aj `SimpleAuthenticator` na jednoduché overenie mena a hesla. V projekte sa takisto nachádzajú aj
+pripravené kontroléry `AuthApiController` a `MessageApiController`. V nich budete implementovať jednotlivé akcie. V projekte sú aj modely `Login` a `Message`,
+ktoré zodpovedajú tabuľkám v DB. Všimnite si implementáciu metód `isActive()` a `getAllActive()` v triede `Login`.
+
+1. `AuthApiController` - má na starosti operácie týkajúce sa používateľa a informácií o ňom. Obsahuje nasledovné akcie:
     1. `index` - keďže ide o API, akcia `index` bude vracať HTTP kód _501 Not Implemented_.
     2. `login` - akcia bude očakávať odoslanie prihlasovacích údajov v JSON objekte s dvomi atribútmi `login` a `password`. V prípade, ak ich objekt
        nebude obsahovať, alebo budú mať prázdnu hodnotu, vráti HTTP kód _400 Bad Request_. Ak sa podarí prihlásenie, vytvorí sa nový model `Login` s
