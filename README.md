@@ -5,8 +5,9 @@ Momentálne je otvorená vetva __MAIN__, ktorá obsahuje _štartér_. Riešenie 
 ## Úlohy na cvičenie
 
 ### Jednoduchá práca s JSON vo frameworku Vaííčko
+
 1. Vytvorte metódu `showJson()` v kontroléri `HomeController`. Metóda vytvorí jednu správu (model `Message`) a zobrazí ju vo formáte JSON.
-2. Preštudujte si pohľad `sendJson.view.php`. Čo robí? 
+2. Preštudujte si pohľad `sendJson.view.php`. Čo robí?
 3. Vytvorte metódu `receiveJson()` v kontroléri `HomeController`. Metóda príjme JSON data správy a pošle ich späť.
 
 ### Tvorba API pre chat aplikáciu
@@ -17,7 +18,8 @@ Samotný chat budeme vytvárať na ďalšom cvičení.
 Preštudujte si súbory v štartéri. V adresári `docker\sql` sa nachádza súbor `ddl.sql`, ktorý Vám vytvorí DB tabuľky, potrebné pre tento projekt. Takisto
 štartér obsahuje Vaííčko framework. Projekt obsahuje aj `SimpleAuthenticator` na jednoduché overenie mena a hesla. V projekte sa takisto nachádzajú aj
 pripravené kontroléry `AuthApiController` a `MessageApiController`. V nich budete implementovať jednotlivé akcie. V projekte sú aj modely `Login` a `Message`,
-ktoré zodpovedajú tabuľkám v DB. Všimnite si implementáciu metód `isActive()` a `getAllActive()` v triede `Login`.
+ktoré zodpovedajú tabuľkám v DB. Všimnite si implementáciu metód `isActive()` a `getAllActive()` v triede `Login`. Prezrite si aj testy v
+súbore `\test\Tests.http`. Skúste ich spustiť. Úlohou cvičenia bude implementovať metódy kontrolérov tak, aby všetky testy prebehli úspešne.
 
 1. `AuthApiController` - Má na starosti operácie týkajúce sa používateľa a informácií o ňom. Obsahuje nasledovné akcie:
     1. `index` - Keďže ide o API, akcia `index` bude vracať HTTP kód _501 Not Implemented_.
@@ -43,11 +45,11 @@ ktoré zodpovedajú tabuľkám v DB. Všimnite si implementáciu metód `isActiv
     3. `getMessages` - Vráti všetky správy. Pošlú sa správy, ktoré používateľ odoslal, verejné správy a jemu poslané privátne správy. Metóda môže prijať
        parameter `lastId`, ktorý klientovi zašle správy od zadaného id.
 
-Pre kontrolu správnosti implementácie sme vytvorili __HTTP testy__. Tie sa nachádzajú v súbore `\test\Tests.http`. Pár poznámok:
+Pár poznámok k testom:
 
 * Testy needitujte.
 * Vytvorte API tak, aby všetky testy prebehli úspešne.
-* Jednotlivé HTTP dopyty sa dajú púšťať jednotlivo, niektoré sú zavislé ne iných testoch, preto nemusia byť úspešné.
+* Jednotlivé HTTP dopyty sa dajú púšťať jednotlivo, niektoré sú závislé ne iných testoch, preto nemusia byť úspešné.
 
 ## Ako nájdem vetvu môjho cvičenia?
 
