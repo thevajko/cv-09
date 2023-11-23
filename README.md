@@ -21,13 +21,13 @@ pripravené kontroléry `AuthApiController` a `MessageApiController`. V nich bud
 ktoré zodpovedajú tabuľkám v DB. Všimnite si implementáciu metód `isActive()` a `getAllActive()` v triede `Login`. Prezrite si aj testy v
 súbore `\test\Tests.http`. Skúste ich spustiť. Úlohou cvičenia bude implementovať metódy kontrolérov tak, aby všetky testy prebehli úspešne.
 
-1. `AuthApiController` - Má na starosti operácie týkajúce sa používateľa a informácií o ňom. Obsahuje nasledovné akcie:
+1. `AuthApiController` - Má na starosti operácie týkajúce sa používateľa a vracia informácie o ňom. Obsahuje nasledovné akcie:
     1. `index` - Keďže ide o API, akcia `index` bude vracať HTTP kód _501 Not Implemented_.
     2. `login` - Akcia bude očakávať odoslanie prihlasovacích údajov v JSON objekte s dvomi atribútmi `login` a `password`. V prípade, ak ich objekt
        nebude obsahovať, alebo budú mať prázdnu hodnotu, vráti HTTP kód _400 Bad Request_. Ak sa podarí prihlásenie, vytvorí sa nový model `Login` s
-       aktuálnym časom. Ak už prihlásenie existuje, upraví sa jeho atribút `last_action`. Po úspešnom overení pou69vate+la sa vráti klientovi prázdna odpoveď (
+       aktuálnym časom. Ak už prihlásenie existuje, upraví sa jeho atribút `last_action`. Po úspešnom overení používateľa sa vráti klientovi prázdna odpoveď (
        _empty response_).
-    3. `logout` - Skontroluje, či je používateľ prihlásený. Ak áno odhlási ho a zmaže záznam o jeho logine z DB. Ak nie je prihlásený, neurobí nič. Na konci
+    3. `logout` - Skontroluje, či je používateľ prihlásený. Ak áno, odhlási ho a zmaže záznam o jeho logine z DB. Ak nie je prihlásený, neurobí nič. Na konci
        vždy vráti klientovi _empty response_.
     4. `status` - Ak je používateľ prihlásený, klient dostane JSON odpoveď s objektom, ktorý obsahuje atribút `login` a má hodnotu aktuálne mena prihláseného
        používateľa. Neprihlásenému používateľovi vráti HTTP kód _401 Unauthorized_.
