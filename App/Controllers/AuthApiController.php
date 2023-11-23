@@ -11,7 +11,8 @@ use App\Models\Login;
 /**
  * Contains API for user actions
  */
-class AuthApiController extends AControllerBase {
+class AuthApiController extends AControllerBase
+{
 
     /**
      * Always returns 501 Not Implemented, API do not need index action
@@ -19,7 +20,7 @@ class AuthApiController extends AControllerBase {
      */
     public function index(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        throw new HTTPException(501, "Not Implemented");
     }
 
     /**
@@ -36,7 +37,27 @@ class AuthApiController extends AControllerBase {
      */
     public function login(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        $data = $this->request()->getRawBodyJSON();
+
+        if (is_object($data)
+            && (property_exists($data, 'login') && property_exists($data, 'password'))
+            && $this->app->getAuth()->login($data->login, $data->password)
+        ) {
+            $loggedUser = Login::getOne($data->login);
+            if (empty($loggedUser)) {
+                $newLogin = new Login();
+                $newLogin->setLogin($data->login);
+                $newLogin->setLastAction(new \DateTime());
+                $newLogin->save();
+            } else {
+                $loggedUser->setLastAction(new \DateTime());
+                $loggedUser->save();
+            }
+            return new EmptyResponse();
+        } else {
+            throw new HTTPException(400, 'Bad Request');
+        }
+
     }
 
     /**
@@ -46,7 +67,14 @@ class AuthApiController extends AControllerBase {
      */
     public function logout(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            $login = Login::getOne($this->app->getAuth()->getLoggedUserName());
+            if (!empty($login)) {
+                $login->delete();
+            }
+            $this->app->getAuth()->logout();
+        }
+        return new EmptyResponse();
     }
 
 
@@ -59,8 +87,14 @@ class AuthApiController extends AControllerBase {
      * @return \App\Core\Responses\JsonResponse
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
-    public function status() {
-        throw new HTTPException(501,"Not Implemented");
+    public function status()
+    {
+        if ($this->app->getAuth()->isLogged()) {
+            return $this->json([
+                'login' => $this->app->getAuth()->getLoggedUserName()
+            ]);
+        }
+        throw new HTTPException(401, 'Not authorized');
     }
 
     /**
@@ -68,7 +102,11 @@ class AuthApiController extends AControllerBase {
      * @return \App\Core\Responses\JsonResponse
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
-    public function activeUsers() {
-        throw new HTTPException(501,"Not Implemented");
+    public function activeUsers()
+    {
+        if ($this->app->getAuth()->isLogged()) {
+            return $this->json(Login::getAllActive());
+        }
+        throw new HTTPException(401, 'Not authorized');
     }
 }
