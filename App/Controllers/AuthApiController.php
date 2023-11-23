@@ -36,7 +36,26 @@ class AuthApiController extends AControllerBase {
      */
     public function login(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        $data = $this->request()->getRawBodyJSON();
+
+        if (is_object($data)
+        && property_exists($data, 'login') && property_exists($data, 'password')
+        && $this->app->getAuth()->login($data->login, $data->password)
+        ) {
+            $logged = Login::getOne('login');
+            if (empty($logged)) {
+                $login = new Login();
+                $login->setLogin($data->login);
+                $login->setLastAction(new \DateTime());
+                $login->save();
+            } else {
+                $logged->setLastAction(new \DateTime());
+                $logged->save();
+            }
+            return new EmptyResponse();
+        } else {
+            throw new HTTPException('400', 'Bad request');
+        }
     }
 
     /**
