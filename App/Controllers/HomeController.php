@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\AControllerBase;
 use App\Core\Responses\Response;
+use App\Models\Login;
 
 /**
  * Class HomeController
@@ -38,6 +39,22 @@ class HomeController extends AControllerBase
     public function contact(): Response
     {
         return $this->html();
+    }
+
+    public function showJson(): Response
+    {
+        $login = new Login();
+        $login->setLogin('patrik');
+        $login->setLastAction(new \DateTime());
+
+        return $this->json($login);
+
+    }
+
+    public function receiveJson()
+    {
+        $data = $this->request()->getRawBodyJSON();
+        return $this->json($data);
     }
 
     public function sendJson(): Response
