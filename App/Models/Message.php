@@ -48,7 +48,7 @@ class Message extends Model
         return $this->recipient;
     }
 
-    public function setRecipient(string $recipient): void
+    public function setRecipient(?string $recipient): void
     {
         $this->recipient = $recipient;
     }
