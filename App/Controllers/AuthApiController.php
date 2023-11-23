@@ -42,7 +42,7 @@ class AuthApiController extends AControllerBase {
         && property_exists($data, 'login') && property_exists($data, 'password')
         && $this->app->getAuth()->login($data->login, $data->password)
         ) {
-            $logged = Login::getOne('login');
+            $logged = Login::getOne($data->login);
             if (empty($logged)) {
                 $login = new Login();
                 $login->setLogin($data->login);
@@ -86,7 +86,13 @@ class AuthApiController extends AControllerBase {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function status() {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            return $this->json((object)[
+                'login' => $this->app->getAuth()->getLoggedUserName()
+            ]);
+        } else {
+            throw new HTTPException('401', 'Not authorized');
+        }
     }
 
     /**
