@@ -49,7 +49,17 @@ class MessageApiController extends AControllerBase
      */
     public function sendMessage(){
 
+        if ($this->request()->isContentTypeJSON()) {
+            $c = $this->request()->getRawBodyJSON();
+            if ( is_object($c)
+                && property_exists($c, "recipient")
+                && property_exists($c, "message")
+            ) {
+            }
 
+
+            }
+        }
 
 
     }
