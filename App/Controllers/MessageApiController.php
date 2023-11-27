@@ -22,7 +22,10 @@ class MessageApiController extends AControllerBase
      */
     public function authorize($action)
     {
-        throw new HTTPException(501,"Not Implemented");
+        if (!$this->app->getAuth()->isLogged()) {
+            throw new HTTPException(401);
+        }
+        return true;
     }
     /**
      * Always returns 501 Not Implemented, API do not need index action
@@ -44,8 +47,22 @@ class MessageApiController extends AControllerBase
      * @throws HTTPException 400 Bad Request if input has bad format or private message is sent to unactive user
      * @throws \JsonException
      */
-    public function sendMessage(){
-        throw new HTTPException(501,"Not Implemented");
+    public function sendMessage() {
+        $data = $this->request()->getRawBodyJSON();
+        if (!is_object($data) || !property_exists($data, "recipient") || empty($data->message)) {
+            throw new HTTPException(400);
+        }
+        if ($data->recipient != null && !Login::isActive($data->recipient)) {
+            throw new HTTPException(400);
+        }
+
+        $message = new Message();
+        $message->setMessage($data->message);
+        $message->setAuthor($this->app->getAuth()->getLoggedUserId());
+        $message->setCreated(new \DateTime());
+        $message->setRecipient($data->recipient);
+        $message->save();
+        return new EmptyResponse();
     }
 
     /**
