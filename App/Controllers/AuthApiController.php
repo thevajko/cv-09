@@ -82,7 +82,12 @@ class AuthApiController extends AControllerBase {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function status() {
-        throw new HTTPException(501,"Not Implemented");
+        if (!$this->app->getAuth()->isLogged()) {
+            throw new HTTPException(401);
+        }
+        $data = new \stdClass();
+        $data->login = $this->app->getAuth()->getLoggedUserId();
+        return $this->json($data);
     }
 
     /**
