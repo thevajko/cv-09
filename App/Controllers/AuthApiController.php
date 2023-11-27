@@ -11,7 +11,8 @@ use App\Models\Login;
 /**
  * Contains API for user actions
  */
-class AuthApiController extends AControllerBase {
+class AuthApiController extends AControllerBase
+{
 
     /**
      * Always returns 501 Not Implemented, API do not need index action
@@ -19,7 +20,7 @@ class AuthApiController extends AControllerBase {
      */
     public function index(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        throw new HTTPException(501, "Not Implemented");
     }
 
     /**
@@ -36,7 +37,29 @@ class AuthApiController extends AControllerBase {
      */
     public function login(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        try {
+            $json = $this->request()->getRawBodyJSON();
+            if (is_object($json)
+                && isset($json->login)
+                && !empty($json->login)
+                && isset($json->password)
+                && !empty($json->password)
+                && $this->app->getAuth()->login($json->login, $json->password)) {
+
+                $dbLogin = Login::getOne($json->login);
+                if ($dbLogin == null) {
+                    $dbLogin = new Login();
+                    $dbLogin->setLogin($json->login);
+                }
+                $dbLogin->setLastAction(new \DateTime());
+                $dbLogin->save();
+
+                return new EmptyResponse();
+            }
+            throw new HTTPException(400);
+        } catch (\JsonException $exception) {
+            throw new HTTPException(400, h: $exception);
+        }
     }
 
     /**
@@ -46,7 +69,7 @@ class AuthApiController extends AControllerBase {
      */
     public function logout(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        throw new HTTPException(501, "Not Implemented");
     }
 
 
@@ -59,8 +82,9 @@ class AuthApiController extends AControllerBase {
      * @return \App\Core\Responses\JsonResponse
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
-    public function status() {
-        throw new HTTPException(501,"Not Implemented");
+    public function status()
+    {
+        throw new HTTPException(501, "Not Implemented");
     }
 
     /**
@@ -68,7 +92,8 @@ class AuthApiController extends AControllerBase {
      * @return \App\Core\Responses\JsonResponse
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
-    public function activeUsers() {
-        throw new HTTPException(501,"Not Implemented");
+    public function activeUsers()
+    {
+        throw new HTTPException(501, "Not Implemented");
     }
 }
