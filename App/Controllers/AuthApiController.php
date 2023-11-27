@@ -8,6 +8,7 @@ use App\Core\Responses\EmptyResponse;
 use App\Core\Responses\Response;
 use App\Models\Login;
 use Cassandra\Date;
+use stdClass;
 
 /**
  * Contains API for user actions
@@ -92,7 +93,12 @@ class AuthApiController extends AControllerBase {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function status() {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            $newobj = new stdClass();
+            $newobj->login = $this->app->getAuth()->getLoggedUserName();
+            return $this->json($newobj);
+        }
+        throw new HTTPException("401");
     }
 
     /**
