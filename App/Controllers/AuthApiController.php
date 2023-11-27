@@ -63,7 +63,12 @@ class AuthApiController extends AControllerBase {
      */
     public function logout(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            $login = Login::getOne($this->app->getAuth()->getLoggedUserId());
+            $login?->delete();
+            $this->app->getAuth()->logout();
+        }
+        return new EmptyResponse();
     }
 
 
