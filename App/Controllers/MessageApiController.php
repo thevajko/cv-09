@@ -22,6 +22,9 @@ class MessageApiController extends AControllerBase
      */
     public function authorize($action)
     {
+        if ($this->app->getAuth()->isLogged()) {
+            return true;
+        }
         throw new HTTPException(501,"Not Implemented");
     }
     /**
@@ -45,7 +48,10 @@ class MessageApiController extends AControllerBase
      * @throws \JsonException
      */
     public function sendMessage(){
-        throw new HTTPException(501,"Not Implemented");
+
+
+
+
     }
 
     /**
