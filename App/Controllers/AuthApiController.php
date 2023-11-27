@@ -45,8 +45,12 @@ class AuthApiController extends AControllerBase {
             ) {
                 if ($c->password && $c->login
                     && $this->app->getAuth()->login($c->login , $c->password)) {
-                    $l = new Login();
-                    $l->setLogin($c->login);
+
+                    $l = Login::getOne($c->login);
+                    if ($l == null) {
+                        $l = new Login();
+                        $l->setLogin($c->login);
+                    }
                     $l->setLastAction(new \DateTime());
                     $l->save();
 
