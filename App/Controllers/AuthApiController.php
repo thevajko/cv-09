@@ -40,9 +40,7 @@ class AuthApiController extends AControllerBase
         try {
             $json = $this->request()->getRawBodyJSON();
             if (is_object($json)
-                && isset($json->login)
                 && !empty($json->login)
-                && isset($json->password)
                 && !empty($json->password)
                 && $this->app->getAuth()->login($json->login, $json->password)) {
 
@@ -69,7 +67,12 @@ class AuthApiController extends AControllerBase
      */
     public function logout(): Response
     {
-        throw new HTTPException(501, "Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            $dbLogin = Login::getOne($this->app->getAuth()->getLoggedUserId());
+            $dbLogin?->delete();
+            $this->app->getAuth()->logout();
+        }
+        return new EmptyResponse();
     }
 
 
