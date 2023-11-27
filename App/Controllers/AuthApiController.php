@@ -87,7 +87,14 @@ class AuthApiController extends AControllerBase
      */
     public function status()
     {
-        throw new HTTPException(501, "Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            $login = $this->app->getAuth()->getLoggedUserId();
+            $response = new \stdClass();
+            $response->login = $login;
+
+            return $this->json($response);
+        }
+        throw new HTTPException(401);
     }
 
     /**
