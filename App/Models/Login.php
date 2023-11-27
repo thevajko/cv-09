@@ -63,7 +63,7 @@ class Login extends Model
      */
     public static function getAllActive() : array
     {
-        return Login::getAll("last_action > DATE_ADD(NOW(), INTERVAL -30 SECOND )", []);
+        return Login::getAll("last_action > DATE_ADD(NOW(), INTERVAL -30 SECOND )");
     }
 
 }

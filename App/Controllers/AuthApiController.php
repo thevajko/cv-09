@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\AControllerBase;
 use App\Core\HTTPException;
 use App\Core\Responses\EmptyResponse;
+use App\Core\Responses\JsonResponse;
 use App\Core\Responses\Response;
 use App\Models\Login;
 
@@ -81,7 +82,7 @@ class AuthApiController extends AControllerBase {
      * @return \App\Core\Responses\JsonResponse
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
-    public function status() {
+    public function status(): JsonResponse {
         if (!$this->app->getAuth()->isLogged()) {
             throw new HTTPException(401);
         }
@@ -95,7 +96,11 @@ class AuthApiController extends AControllerBase {
      * @return \App\Core\Responses\JsonResponse
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
-    public function activeUsers() {
-        throw new HTTPException(501,"Not Implemented");
+    public function activeUsers(): JsonResponse
+    {
+        if (!$this->app->getAuth()->isLogged()) {
+            throw new HTTPException(401);
+        }
+        return $this->json(Login::getAllActive());
     }
 }
