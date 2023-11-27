@@ -7,6 +7,7 @@ use App\Core\HTTPException;
 use App\Core\Responses\EmptyResponse;
 use App\Core\Responses\Response;
 use App\Models\Login;
+use Cassandra\Date;
 
 /**
  * Contains API for user actions
@@ -36,7 +37,24 @@ class AuthApiController extends AControllerBase {
      */
     public function login(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->request()->isContentTypeJSON()) {
+            $c = $this->request()->getRawBodyJSON();
+            if ( is_object($c)
+                && property_exists($c, "login")
+                &&  property_exists($c, "password")
+            ) {
+                if ($c->password && $c->login
+                    && $this->app->getAuth()->login($c->login , $c->password)) {
+                    $l = new Login();
+                    $l->setLogin($c->login);
+                    $l->setLastAction(new \DateTime());
+                    $l->save();
+
+                    return new EmptyResponse();
+                }
+            }
+        }
+        throw new HTTPException(400);
     }
 
     /**
