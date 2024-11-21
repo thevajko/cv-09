@@ -57,6 +57,9 @@ Accept: application/json
 }
 
 > {%
+
+    client.global.set("session", response.headers.valuesOf("Set-Cookie")[0]);
+
     client.test("Correct login parameters", function () {
         client.assert(response.status == 204, "Login response is not 204")
         client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
@@ -70,7 +73,7 @@ Accept: application/json
 POST http://localhost:80/?c=authApi&a=status
 Content-Type: application/json
 Accept: application/json
-
+Cookie: {{session}}
 
 > {%
     client.test("Check logged status", function () {
@@ -146,6 +149,9 @@ Accept: application/json
 }
 
 > {%
+
+    client.global.set("session", response.headers.valuesOf("Set-Cookie")[0]);
+
     client.test("Login with the correct values", function () {
         client.assert(response.status == 204, "Login response is not 204 No content")
         client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
@@ -158,7 +164,7 @@ Accept: application/json
 POST http://localhost:80/?c=authApi&a=status
 Content-Type: application/json
 Accept: application/json
-
+Cookie: {{session}}
 
 > {%
     client.test("Check logged status", function () {
@@ -460,13 +466,14 @@ Cookie: {{session1}}
         });
         client.assert(found, "Test message was not returned by server");
         client.global.set("maxId", maxMsgId);
+        client.global.set("maxId-1", maxMsgId-1);
     })
 %}
 
 ###
-# @name = getMessages -  Get all messages for user 1 with lastId, NO-COOKIE
+# @name = getMessages -  Get the last messages (a message after lastId)  for user 1, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=getMessages&lastId={{maxId}}
+POST http://localhost:80/?c=messageApi&a=getMessages&lastId={{maxId-1}}
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -482,7 +489,7 @@ Cookie: {{session1}}
 
         let notFound = true;
         response.body.forEach(msg => {
-            if (msg.id == client.global.get("maxId")) {
+            if (msg.id == client.global.get("maxId-1")) {
                 notFound = false;
             }
         });
