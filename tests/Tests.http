@@ -7,6 +7,7 @@
     client.global.set("login1", "matko");
     client.global.set("login2", "kubko");
     client.global.set("login3", "avatar");
+    client.global.set("session_id", "");
 
 %}
 
@@ -57,6 +58,9 @@ Accept: application/json
 }
 
 > {%
+
+    client.global.set("session", response.headers.valuesOf("Set-Cookie")[0]);
+
     client.test("Correct login parameters", function () {
         client.assert(response.status == 204, "Login response is not 204")
         client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
@@ -67,20 +71,20 @@ Accept: application/json
 ###
 # @name = status - user1 should be logged in
 # check status if logged correctly
-#POST http://localhost:80/?c=authApi&a=status
-#Content-Type: application/json
-#Accept: application/json
-#
-#
-#> {%
-#    client.test("Check logged status", function () {
-#        client.assert(response.status == 200, "Response is not 200 Ok")
-#        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
-#        client.assert(response.body.login === client.global.get("login1"), "User is not logged correctly.")
-#
-#    })
-#
-#%}
+POST http://localhost:80/?c=authApi&a=status
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session}}
+
+> {%
+    client.test("Check logged status", function () {
+        client.assert(response.status == 200, "Response is not 200 Ok")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+        client.assert(response.body.login === client.global.get("login1"), "User is not logged correctly.")
+
+    })
+
+%}
 
 ###
 # @name = logout - try to logout user1
