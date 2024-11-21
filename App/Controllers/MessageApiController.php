@@ -9,7 +9,6 @@ use App\Core\Responses\Response;
 use App\Models\Login;
 use App\Models\Message;
 
-
 class MessageApiController extends AControllerBase
 {
 
@@ -20,9 +19,13 @@ class MessageApiController extends AControllerBase
      * @return true only if is user authenticated
      * @throws HTTPException 401 Unauthorized if user is not logged in
      */
-    public function authorize($action)
+    public function authorize($action) : bool
     {
-        throw new HTTPException(501,"Not Implemented");
+        // all actions are available only for logged users
+        if ($this->app->getAuth()->isLogged()) {
+            return true;
+        }
+        throw new HTTPException(401);
     }
     /**
      * Always returns 501 Not Implemented, API do not need index action
@@ -44,8 +47,39 @@ class MessageApiController extends AControllerBase
      * @throws HTTPException 400 Bad Request if input has bad format or private message is sent to unactive user
      * @throws \JsonException
      */
-    public function sendMessage(){
-        throw new HTTPException(501,"Not Implemented");
+    public function sendMessage() : Response {
+        // parse input JSON
+        $jsonData = $this->app->getRequest()->getRawBodyJSON();
+
+        if (
+            is_object($jsonData) // an object is expected
+            && property_exists($jsonData, 'recipient') &&  property_exists($jsonData, 'message') // check if object has recipient and message attributes
+            && !empty($jsonData->message) // message attribute must not be empty
+        ) {
+            // create a new message
+            $message = new Message();
+            // set the logged user as the author of the message
+            $message->setAuthor($this->app->getAuth()->getLoggedUserName());
+            // if there is a recipient set, the message is private
+            if (!empty(trim($jsonData->recipient))) {
+                // private message can be sent only if recipient is active
+                if (!Login::isActive($jsonData->recipient)) {
+                    // throw exception if recipient is inactive
+                    throw new HTTPException(400, 'The recipient is not available');
+                }
+                // set the recipient
+                $message->setRecipient($jsonData->recipient);
+            }
+            // set the rest of the message and save it
+            $message->setCreated(new \DateTime());
+            $message->setMessage($jsonData->message);
+            $message->save();
+
+            // there is no data to be sent to the client
+            return new EmptyResponse();
+        }
+        // throw out exception if validation fail
+        throw new HTTPException(400, 'Bad message structure');
     }
 
     /**
@@ -54,7 +88,7 @@ class MessageApiController extends AControllerBase
      * @return \App\Core\Responses\JsonResponse
      * @throws \Exception
      */
-    public function getMessages()
+    public function getMessages() : Response
     {
         throw new HTTPException(501,"Not Implemented");
     }

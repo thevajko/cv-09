@@ -36,7 +36,34 @@ class AuthApiController extends AControllerBase {
      */
     public function login(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        // parse input JSON
+        $jsonData = $this->app->getRequest()->getRawBodyJSON();
+        if (
+            is_object($jsonData) // an object is expected
+            && property_exists($jsonData, 'login') && property_exists($jsonData, 'password') // check if object has login and password attributes
+            && $this->app->getAuth()->login($jsonData->login, $jsonData->password) // now we try login to check if send values are ok
+        ) {
+
+            // try to get login record, if user was already authenticated
+            $logged = Login::getOne($jsonData->login);
+
+            // if not, create a new record
+            if (empty($logged)) {
+                $newLogin = new Login();
+                $newLogin->setLogin($jsonData->login);
+                $newLogin->setLastAction(new \DateTime());
+                $newLogin->save();
+            } else {
+                // if yes, just update the last action time
+                $logged->setLastAction(new \DateTime());
+                $logged->save();
+            }
+            // there is no data to be sent to the client
+            return new EmptyResponse();
+        } else {
+            // if validation fails, throw an exception
+            throw new HTTPException(400, 'Bad credentials.');
+        }
     }
 
     /**
@@ -49,9 +76,9 @@ class AuthApiController extends AControllerBase {
         throw new HTTPException(501,"Not Implemented");
     }
 
-
     /**
-     * No input params. returns
+     * Action returns the username, if user is logged in or 401 status code, if not
+     * No input params. Returns
      * {
      *    "login"    : "<logged user login>",
      * }

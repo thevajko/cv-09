@@ -6,7 +6,7 @@ Momentálne je otvorená vetva __MAIN__, ktorá obsahuje _štartér_. Riešenie 
 
 ### Ako funguje https protokol?
 
-1. Otvorte si **Web developer tool** a prenite sa na kartu **Sieť**.
+1. Otvorte si **Web developer tool** a prepnite sa na kartu **Sieť**.
 2. Načítajte ľubovoľný web z internetu a pozrite si, ako vyzerá komunikácia medzi prehliadačom a web serverom.
 3. Akú verziu protokolu a aké metódy najčastejšie používajú? Čo všetko vieme z tejto komunikácie zistiť?
 
@@ -28,28 +28,33 @@ V projekte nájdeme tiež modely `Login` a `Message`, ktoré zodpovedajú tabuľ
 triede `Login`. Nakoniec si prezrite aj testy v súbore `\test\Tests.http`. Skúste ich spustiť. Úlohou cvičenia bude implementovať metódy kontrolérov tak, 
 aby všetky testy prebehli úspešne.
 
-1. `AuthApiController` - Má na starosti operácie týkajúce sa používateľa a vracia informácie o ňom. Obsahuje nasledovné akcie:
-    1. `index` - Keďže ide o API, akcia `index` bude vracať HTTP kód _501 Not Implemented_.
-    2. `login` - Akcia bude očakávať odoslanie prihlasovacích údajov v JSON objekte s dvomi atribútmi `login` a `password`. V prípade, ak ich objekt
-       nebude obsahovať, alebo budú mať prázdnu hodnotu, vráti HTTP kód _400 Bad Request_. Ak sa podarí prihlásenie, vytvorí sa nový model `Login` s
-       aktuálnym časom. Ak už prihlásenie existuje, upraví sa jeho atribút `last_action`. Po úspešnom overení používateľa sa vráti klientovi prázdna odpoveď 
-       (_empty response_).
-    3. `logout` - Skontroluje, či je používateľ prihlásený. Ak áno, odhlási ho a zmaže záznam o jeho logine z DB. Ak nie je prihlásený, neurobí nič. Na konci
-       vždy vráti klientovi _empty response_.
-    4. `status` - Ak je používateľ prihlásený, klient dostane JSON odpoveď s objektom, ktorý obsahuje atribút `login` a má hodnotu aktuálne mena prihláseného
-       používateľa. Neprihlásenému používateľovi vráti HTTP kód _401 Unauthorized_.
-    5. `activeUsers` - Ak je používateľ prihlásený, klient dostane JSON odpoveď v podobe poľa objektov typu `Login` používateľov, ktorí sú aktívni. Aktívny
-       používateľ je každý používateľ po dobu 30 sekúnd od poslednej žiadosti o získanie správ. Pokiaľ žiadnych aktívnych používateľov nenájde, vráti prázdne
-       pole. Ak je používateľ neprihlásený, vráti HTTP kód _401 Unauthorized_.
-3. `MessageApiController` - Poskytuje API pre odosielanie a získavanie správ. Všetky akcie tohto kontroléra sú určené iba pre prihlásených používateľov.
-    1. `index` - Keďže sa jedná o API, index bude vracať HTTP kód _501 Not Implemented_.
-    2. `sendMessage` - Očakáva odoslanie správy s dvoma povinnými atribútmi: `recipient` a `message`. Ak ich objekt neobsahuje, klientovi sa zašle HTTP odpoveď
+1. `AuthApiController` - Má na starosti operácie týkajúce sa používateľa a vracia informácie o ňom. Obsahuje tieto už implementované akcie:
+   - `index` - Keďže ide o API, akcia `index` bude vracať HTTP kód _501 Not Implemented_.
+   - `login` - Akcia prihlasovacie údaje v JSON objekte s dvomi atribútmi `login` a `password`. V prípade, ak ich objekt  neobsahuje, alebo budú mať prázdnu 
+     hodnotu, vráti HTTP kód _400 Bad Request_. Ak sa podarí prihlásenie, vytvorí sa nový model `Login` s aktuálnym časom. Ak už prihlásenie existuje, 
+     upraví sa jeho atribút `last_action`. Po úspešnom overení používateľa sa vráti klientovi prázdna odpoveď (_empty response_).
+   
+   Je potrebné vytvoriť tieto akcie:
+   - `logout` - Skontroluje, či je používateľ prihlásený. Ak áno, odhlási ho a zmaže záznam o jeho logine z DB. Ak nie je prihlásený, neurobí nič. Na konci
+     vždy vráti klientovi _empty response_.
+   - `status` - Ak je používateľ prihlásený, klient dostane JSON odpoveď s objektom, ktorý obsahuje atribút `login` a má hodnotu aktuálne mena prihláseného
+     používateľa. Neprihlásenému používateľovi vráti HTTP kód _401 Unauthorized_.
+   - `activeUsers` - Ak je používateľ prihlásený, klient dostane JSON odpoveď v podobe poľa objektov typu `Login` používateľov, ktorí sú aktívni. Aktívny
+      používateľ je každý používateľ po dobu 30 sekúnd od poslednej žiadosti o získanie správ. Pokiaľ žiadnych aktívnych používateľov nenájde, vráti prázdne
+      pole. Ak je používateľ neprihlásený, vráti HTTP kód _401 Unauthorized_.
+
+2. `MessageApiController` - Poskytuje API pre odosielanie a získavanie správ. Všetky akcie tohto kontroléra sú určené iba pre prihlásených používateľov. 
+    Obsahuje tieto už implementované akcie:
+    - `index` - Keďže sa jedná o API, index bude vracať HTTP kód _501 Not Implemented_.
+    - `sendMessage` - Očakáva odoslanie správy s dvoma povinnými atribútmi: `recipient` a `message`. Ak ich objekt neobsahuje, klientovi sa zašle HTTP odpoveď
        _400 Bad Request_. Ďalšie podrobnosti:
         * Atribút `recipient` obsahuje `null`, ak je správa verejná. Ak je správa privátna, tento atribút obsahuje login používateľa, komu je určená.
         * Atribút `message` nesmie obsahovať prázdnu hodnotu.
         * Ak atribút `recipient` obsahuje hodnotu a daný používateľ nie je aktívny, klientovi sa zašle HTTP odpoveď _400 The recipient is not available_.
         * Po uložení správy na serveri, sa klientovi zašle _empty response_.
-    3. `getMessages` - Vráti všetky správy. Pošlú sa správy, ktoré používateľ odoslal, verejné správy a jemu poslané privátne správy. Metóda môže prijať
+      
+    Je potrebné vytvoriť túto akciu:   
+    - `getMessages` - Získa všetky správy. Pošlú sa správy, ktoré používateľ odoslal, verejné správy a jemu poslané privátne správy. Metóda môže prijať
        parameter `lastId`, ktorý klientovi zašle správy od zadaného id.
 
 Pár poznámok k testom:
