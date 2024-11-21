@@ -432,7 +432,7 @@ Cookie: {{session1}}
 %}
 
 ###
-# @name = getMessages -  Get all messages for user 1 and chech if message from previous request was stored, NO-COOKIE
+# @name = getMessages -  Get all messages for user 1 and check if message from the previous request was stored, NO-COOKIE
 #@no-cookie-jar
 POST http://localhost:80/?c=messageApi&a=getMessages
 Content-Type: application/json
@@ -477,7 +477,7 @@ Cookie: {{session1}}
         client.assert(response.status == 200, "There is not 200 status in response")
         client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
 
-        // there should be at last one message stored on the server:
+        // there should be at least one message stored on the server:
         client.assert(response.body.length > 0, "No messages sent from server. There must be at least one.")
 
         let notFound = true;

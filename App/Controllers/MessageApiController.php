@@ -93,23 +93,15 @@ class MessageApiController extends AControllerBase
     public function getMessages(): Response
     {
         // get lastId parameter, if exists
-        $lastId = $this->request()->getValue("lastId");
+        $lastId = $this->request()->getValue("lastId") ?? 0;
 
-        $additionalWhere = "";
-        $additionalParams = [];
-
-        // add the WHERE clause and parameters, if lastId is set
-        if (!empty($lastId)) {
-            $additionalWhere = " id < ? AND";
-            $additionalParams = [$lastId];
-        }
 
         // get all messages, where user is the recipient or the author
-        $messages = Message::getAll(
-            $additionalWhere . " ( recipient IS NULL OR recipient = ? OR author = ?)",
-            // merge parameter to a single array
-            array_merge($additionalParams, [$this->app->getAuth()->getLoggedUserName(), $this->app->getAuth()->getLoggedUserName()])
-        );
+        $messages = Message::getAll("id >= ? AND (recipient is NULL OR recipient = ? OR author = ?)", [
+            $lastId,
+            $this->app->getAuth()->getLoggedUserId(),
+            $this->app->getAuth()->getLoggedUserId()
+        ]);
 
         // update datetime of last action for the author
         $author = Login::getOne($this->app->getAuth()->getLoggedUserName());

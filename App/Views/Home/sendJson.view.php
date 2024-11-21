@@ -1,7 +1,7 @@
 <script>
     const data = {author: 'Patrik', recipient: 'Peter', message: 'Ahoj'}
 
-    window.onload = () => {
+    window.onload = async () => {
         document.getElementById('sendJson').onclick = () => {
             fetch('http://localhost/?c=Home&a=receiveJson', {
                 method: 'POST',
