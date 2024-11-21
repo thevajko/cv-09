@@ -39,7 +39,7 @@ aby všetky testy prebehli úspešne.
     4. `status` - Ak je používateľ prihlásený, klient dostane JSON odpoveď s objektom, ktorý obsahuje atribút `login` a má hodnotu aktuálne mena prihláseného
        používateľa. Neprihlásenému používateľovi vráti HTTP kód _401 Unauthorized_.
     5. `activeUsers` - Ak je používateľ prihlásený, klient dostane JSON odpoveď v podobe poľa objektov typu `Login` používateľov, ktorí sú aktívni. Aktívny
-       používateľ je každý používateľ po dobu 30 sekúnd od posledného dopytu na získanie správ. Pokiaľ žiadnych aktívnych používateľov nenájde, vráti prázdne
+       používateľ je každý používateľ po dobu 30 sekúnd od poslednej žiadosti o získanie správ. Pokiaľ žiadnych aktívnych používateľov nenájde, vráti prázdne
        pole. Ak je používateľ neprihlásený, vráti HTTP kód _401 Unauthorized_.
 3. `MessageApiController` - Poskytuje API pre odosielanie a získavanie správ. Všetky akcie tohto kontroléra sú určené iba pre prihlásených používateľov.
     1. `index` - Keďže sa jedná o API, index bude vracať HTTP kód _501 Not Implemented_.
