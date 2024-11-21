@@ -14,11 +14,6 @@ CREATE TABLE `logins`
     PRIMARY KEY (`login`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_slovak_ci;
 
-INSERT INTO `logins` (`login`, `last_action`)
-VALUES ('patrik', '2024-11-21 09:17:36'),
-       ('peter', '2024-11-21 09:17:45'),
-       ('jana', '2024-11-21 09:17:54');
-
 DROP TABLE IF EXISTS `messages`;
 CREATE TABLE `messages`
 (
