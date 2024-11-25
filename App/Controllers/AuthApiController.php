@@ -11,7 +11,8 @@ use App\Models\Login;
 /**
  * Contains API for user actions
  */
-class AuthApiController extends AControllerBase {
+class AuthApiController extends AControllerBase
+{
 
     /**
      * Always returns 501 Not Implemented, API do not need index action
@@ -19,7 +20,7 @@ class AuthApiController extends AControllerBase {
      */
     public function index(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        throw new HTTPException(501, "Not Implemented");
     }
 
     /**
@@ -94,8 +95,15 @@ class AuthApiController extends AControllerBase {
      * @return \App\Core\Responses\JsonResponse
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
-    public function status() {
-        throw new HTTPException(501,"Not Implemented");
+    public function status() : Response
+    {
+        if ($this->app->getAuth()->isLogged()) {
+            return $this->json([
+                'login' => $this->app->getAuth()->getLoggedUserName()
+            ]);
+        } else {
+            throw new HTTPException(401);
+        }
     }
 
     /**
@@ -103,7 +111,14 @@ class AuthApiController extends AControllerBase {
      * @return \App\Core\Responses\JsonResponse
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
-    public function activeUsers() {
-        throw new HTTPException(501,"Not Implemented");
+    public function activeUsers()
+    {
+        if ($this->app->getAuth()->isLogged()) {
+            return $this->json([
+                Login::getAllActive()
+            ]);
+        } else {
+            throw new HTTPException(401);
+        }
     }
 }
