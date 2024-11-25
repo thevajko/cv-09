@@ -90,6 +90,19 @@ class MessageApiController extends AControllerBase
      */
     public function getMessages() : Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        // get lastId parameter, if exists
+        $lastId = $this->request()->getValue("lastId") ?? 0;
+
+        // get all messages, where user is the recipient or the author
+        $messages = Message::getAllMyMessages($lastId, $this->app->getAuth()->getLoggedUserId());
+
+        // update datetime of last action for the author
+        $author = Login::getOne($this->app->getAuth()->getLoggedUserName());
+        $author->setLastAction(new \DateTime());
+        $author->save();
+
+        return $this->json($messages); // send messages to the client
     }
+
+
 }
