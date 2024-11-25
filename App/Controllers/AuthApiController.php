@@ -67,7 +67,7 @@ class AuthApiController extends AControllerBase {
     }
 
     /**
-     * Just only logout user id logged
+     * Just only logout user if logged
      * @return EmptyResponse Always returns EmptyResponse
      * @throws \Exception if there is DB problem
      */
@@ -87,7 +87,12 @@ class AuthApiController extends AControllerBase {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function status() {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            return $this->json([
+                'login' => $this->app->getAuth()->getLoggedUserName(),
+            ]);
+        }
+        throw new HTTPException(401);
     }
 
     /**
