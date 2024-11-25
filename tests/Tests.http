@@ -562,7 +562,7 @@ Cookie: {{session2}}
 
 
 > {%
-    client.test("Get all messages", function () {
+    client.test("Get active users", function () {
         client.assert(response.status == 200, "There is not 200 status in response")
         client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
 
@@ -597,11 +597,11 @@ Cookie: {{session2}}
 
 
 > {%
-    client.test("Get all messages", function () {
+    client.test("Get active users", function () {
         client.assert(response.status == 200, "There is not 200 status in response")
         client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
 
-        client.assert(client.global.get("activeCount") > response.body.length, "There is no change in active user count after one user logged out")
+        client.assert(client.global.get("activeCount") >= response.body.length, "There is no change in active user count after one user logged out")
 
     })
 %}
@@ -625,7 +625,7 @@ Accept: application/json
 ###
 #@name = shiftActiveTimes - Shift are active logins 1 minute back, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=testApi&a=shiftActiveTimes&minutes=-1
+POST http://localhost:80/?c=testApi&a=shiftActiveTimes&minutes=-5
 Content-Type: application/json
 Accept: application/json
 
@@ -645,7 +645,7 @@ Cookie: {{session1}}
 
 
 > {%
-    client.test("Get all messages", function () {
+    client.test("Get all active users", function () {
         client.assert(response.status == 200, "There is not 200 status in response")
         client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
 

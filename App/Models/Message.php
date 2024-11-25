@@ -62,4 +62,13 @@ class Message extends Model
     {
         $this->message = $message;
     }
+
+    public static function getAllMyMessages($lastId, $id)
+    {
+        return Message::getAll("id > ? AND (recipient is NULL OR recipient = ? OR author = ?)", [
+            $lastId,
+            $id,
+            $id
+        ]);
+    }
 }
