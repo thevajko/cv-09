@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\AControllerBase;
 use App\Core\Responses\Response;
+use App\Models\Message;
 
 /**
  * Class HomeController
@@ -43,6 +44,27 @@ class HomeController extends AControllerBase
     public function sendJson(): Response
     {
         return $this->html();
+    }
+
+    public function showJson()
+    {
+        $message = new Message();
+        $message->setAuthor('Patrik');
+        $message->setRecipient('Peter');
+        $message->setMessage('This is a test message');
+
+        return $this->json(
+            [
+                'message' => $message,
+            ]
+        );
+    }
+
+    public function receiveJson()
+    {
+        $data = $this->app->getRequest()->getRawBodyJSON();
+
+        return $this->json($data);
     }
 
 }
