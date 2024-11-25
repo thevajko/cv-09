@@ -73,7 +73,14 @@ class AuthApiController extends AControllerBase {
      */
     public function logout(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            $user = Login::getOne($this->app->getAuth()->getLoggedUserName());
+            if (!is_null($user)) {
+                $user->delete();
+            }
+            $this->app->getAuth()->logout();
+        }
+        return new EmptyResponse();
     }
 
     /**
@@ -101,6 +108,11 @@ class AuthApiController extends AControllerBase {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function activeUsers() {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            return $this->json([
+                Login::getAllActive()
+            ]);
+        }
+        throw new HTTPException(401);
     }
 }
