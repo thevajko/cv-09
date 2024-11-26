@@ -52,12 +52,11 @@ class AuthApiController extends AControllerBase {
                 $newLogin = new Login();
                 $newLogin->setLogin($jsonData->login);
                 $newLogin->setLastAction(new \DateTime());
-                $newLogin->save();
             } else {
                 // if yes, just update the last action time
                 $logged->setLastAction(new \DateTime());
-                $logged->save();
             }
+            $logged->save();
             // there is no data to be sent to the client
             return new EmptyResponse();
         } else {
@@ -73,7 +72,15 @@ class AuthApiController extends AControllerBase {
      */
     public function logout(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            $logged = Login::getOne($this->app->getAuth()->getLoggedUserName());
+
+            if (!empty($logged)) {
+                $logged->delete();
+            }
+            $this->app->getAuth()->logout();
+        }
+        return new EmptyResponse();
     }
 
     /**
@@ -87,7 +94,12 @@ class AuthApiController extends AControllerBase {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function status() {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->app->getAuth()->isLogged()) {
+            return $this->json([
+                'login' => $this->app->getAuth()->getLoggedUserName()
+            ]);
+        }
+        throw new HTTPException(401);
     }
 
     /**
