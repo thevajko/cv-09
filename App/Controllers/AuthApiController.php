@@ -52,11 +52,13 @@ class AuthApiController extends AControllerBase {
                 $newLogin = new Login();
                 $newLogin->setLogin($jsonData->login);
                 $newLogin->setLastAction(new \DateTime());
+                $newLogin->save();
             } else {
                 // if yes, just update the last action time
                 $logged->setLastAction(new \DateTime());
+                $logged->save();
             }
-            $logged->save();
+
             // there is no data to be sent to the client
             return new EmptyResponse();
         } else {
