@@ -56,7 +56,7 @@ aby všetky testy prebehli úspešne.
         * Po uložení správy na serveri, sa klientovi zašle _empty response_.
 
    Je potrebné vytvoriť túto akciu:
-    - `getMessages` - Získa všetky správy. Pošlú sa správy, ktoré používateľ odoslal, verejné správy a jemu poslané privátne správy. Metóda môže prijať
+    - `getAllMessages` - Získa všetky správy. Pošlú sa správy, ktoré používateľ odoslal, verejné správy a jemu poslané privátne správy. Metóda môže prijať
       parameter `lastId`, ktorý klientovi zašle správy od zadaného id.
 
 Pár poznámok k testom:

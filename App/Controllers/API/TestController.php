@@ -4,6 +4,7 @@ namespace App\Controllers\API;
 
 use App\Models\User;
 use Framework\Core\BaseController;
+use Framework\Http\HttpException;
 use Framework\Http\Request;
 use Framework\Http\Responses\EmptyResponse;
 use Framework\Http\Responses\Response;
@@ -16,7 +17,7 @@ class TestController extends BaseController
 
     public function index(Request $request): Response
     {
-        return new EmptyResponse();
+        throw new HTTPException(501, "Not Implemented");
     }
 
 
@@ -27,14 +28,14 @@ class TestController extends BaseController
      * @return EmptyResponse
      * @throws \Exception
      */
-    public function shiftActiveTimes(Request $request) : Response {
-
+    public function shiftActiveTimes(Request $request): Response
+    {
         $minutes = $request->value('minutes');
 
         $users = User::getAll();
 
         foreach ($users as $user) {
-            $user->setLastAction( $user->getLastAction()->modify($minutes . " minutes"));
+            $user->setLastAction($user->getLastAction()->modify($minutes . " minutes"));
             $user->save();
         }
         return new EmptyResponse();

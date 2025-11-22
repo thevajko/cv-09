@@ -438,9 +438,9 @@ Cookie: {{session1}}
 %}
 
 ###
-# @name = getMessages -  Get all messages for user 1 and check if message from the previous request was stored, NO-COOKIE
+# @name = getAllMessages -  Get all messages for user 1 and check if message from the previous request was stored, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=api/message&a=getMessages
+POST http://localhost:80/?c=api/message&a=getAllMessages
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -471,9 +471,9 @@ Cookie: {{session1}}
 %}
 
 ###
-# @name = getMessages -  Get the last messages (a message after lastId)  for user 1, NO-COOKIE
+# @name = getAllMessages -  Get the last messages (a message after lastId)  for user 1, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=api/message&a=getMessages&lastId={{maxId-1}}
+POST http://localhost:80/?c=api/message&a=getAllMessages&lastId={{maxId-1}}
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -499,9 +499,9 @@ Cookie: {{session1}}
 %}
 
 ###
-# @name = getMessages - Get all messages for user 3 and check if there are private messages for other users, NO-COOKIE
+# @name = getAllMessages - Get all messages for user 3 and check if there are private messages for other users, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=api/message&a=getMessages
+POST http://localhost:80/?c=api/message&a=getAllMessages
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session3}}
@@ -526,9 +526,9 @@ Cookie: {{session3}}
 %}
 
 ###
-# @name = getMessages -  Get all messages for user 2 and check if there are some recent private messages, NO-COOKIE
+# @name = getAllMessages -  Get all messages for user 2 and check if there are some recent private messages, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=api/message&a=getMessages
+POST http://localhost:80/?c=api/message&a=getAllMessages
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session2}}

@@ -90,5 +90,16 @@ class MessageController extends BaseController
         throw new HTTPException(400, 'Bad message structure');
     }
 
+    /**
+     * The action returns an array of messages that can logged user receive.
+     *
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function getAllMessages(Request $request): Response
+    {
+        throw new HTTPException(501,"Not Implemented");
+    }
 
 }

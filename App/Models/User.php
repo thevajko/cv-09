@@ -3,12 +3,21 @@
 namespace App\Models;
 
 use DateTime;
+use Framework\Core\IIdentity;
 use Framework\Core\Model;
 
-class User extends Model
+class User extends Model implements IIdentity
 {
-    protected string $login;
-    protected string $last_action;
+    protected ?string $login;
+    protected ?string $last_action;
+
+    public function __construct(?string $username = null, ?DateTime $lastAction = null)
+    {
+        $this->login = $username;
+        if ($lastAction !== null) {
+            $this->last_action = $lastAction->format('Y-m-d H:i:s');
+        }
+    }
 
     /**
      * This method overrides the Model method, because we use the login attribute as a primary key
@@ -24,6 +33,12 @@ class User extends Model
     {
         return $this->login;
     }
+
+    public function getName(): string
+    {
+        return $this->getLogin();
+    }
+
 
     public function setLogin(string $login): void
     {
@@ -49,7 +64,7 @@ class User extends Model
      * @return bool
      * @throws \Exception
      */
-    public static function isActive(string $login) : bool
+    public static function isActive(string $login): bool
     {
         return count(User::getAll("last_action > DATE_ADD(NOW(), INTERVAL -30 SECOND ) AND login like ?", [$login])) > 0;
     }
@@ -59,7 +74,7 @@ class User extends Model
      * @return array
      * @throws \Exception
      */
-    public static function getAllActive() : array
+    public static function getAllActive(): array
     {
         return User::getAll("last_action > DATE_ADD(NOW(), INTERVAL -30 SECOND )", []);
     }

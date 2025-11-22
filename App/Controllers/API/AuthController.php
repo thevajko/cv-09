@@ -53,9 +53,7 @@ class AuthController extends BaseController {
 
             // if not, create a new record
             if (empty($logged)) {
-                $newLogin = new User();
-                $newLogin->setLogin($jsonData->login);
-                $newLogin->setLastAction(new \DateTime());
+                $newLogin = new User($jsonData->login, new \DateTime());
                 $newLogin->save();
             } else {
                 // if yes, just update the last action time
