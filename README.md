@@ -26,7 +26,7 @@ nachádzajú aj pripravené kontroléry `API\AuthController` a `API\MessageContr
 V projekte nájdeme tiež modely `User` a `Message`, ktoré zodpovedajú tabuľkám v DB. Všimnite si implementáciu metód `isActive()` a `getAllActive()` v
 triede `User`.
 
-Nakoniec si prezrite testy v súbore `\test\Tests.http`. Skúste ich spustiť. 22 testov skončí chybou. Úlohou cvičenia bude implementovať metódy kontrolérov tak,
+Nakoniec si prezrite testy v súbore `\test\Tests.http`. Skúste ich spustiť. 17 testov skončí chybou. Úlohou cvičenia bude implementovať metódy kontrolérov tak,
 aby všetky testy prebehli úspešne.
 
 1. `API\AuthController` - Má na starosti operácie týkajúce sa používateľa a vracia informácie o ňom. Obsahuje tieto už implementované akcie:
