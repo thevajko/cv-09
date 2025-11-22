@@ -4,7 +4,6 @@ namespace App;
 
 use App\Auth\SimpleAuthenticator;
 use Framework\Core\ErrorHandler;
-use Framework\DB\DefaultConventions;
 use Framework\DB\SnakeConventions;
 
 /**
