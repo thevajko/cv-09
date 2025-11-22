@@ -9,13 +9,13 @@ use Framework\Core\Model;
 class User extends Model implements IIdentity
 {
     protected ?string $login;
-    protected ?string $last_action;
+    protected ?string $lastAction;
 
     public function __construct(?string $username = null, ?DateTime $lastAction = null)
     {
         $this->login = $username;
         if ($lastAction !== null) {
-            $this->last_action = $lastAction->format('Y-m-d H:i:s');
+            $this->lastAction = $lastAction->format('Y-m-d H:i:s');
         }
     }
 
@@ -48,12 +48,12 @@ class User extends Model implements IIdentity
     public function getLastAction(): DateTime
     {
         // internally is last_action presented as string, because of DB
-        return new DateTime($this->last_action);
+        return new DateTime($this->lastAction);
     }
 
-    public function setLastAction(DateTime $last_action): void
+    public function setLastAction(DateTime $lastAction): void
     {
-        $this->last_action = $last_action->format('Y-m-d H:i:s');
+        $this->lastAction = $lastAction->format('Y-m-d H:i:s');
     }
 
     /** end region */
