@@ -28,14 +28,14 @@ class TestController extends BaseController
      * @return EmptyResponse
      * @throws \Exception
      */
-    public function shiftActiveTimes(Request $request) : Response {
-
+    public function shiftActiveTimes(Request $request): Response
+    {
         $minutes = $request->value('minutes');
 
         $users = User::getAll();
 
         foreach ($users as $user) {
-            $user->setLastAction( $user->getLastAction()->modify($minutes . " minutes"));
+            $user->setLastAction($user->getLastAction()->modify($minutes . " minutes"));
             $user->save();
         }
         return new EmptyResponse();

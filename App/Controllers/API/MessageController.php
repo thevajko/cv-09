@@ -42,56 +42,6 @@ class MessageController extends BaseController
 
     /**
      * This action receives a message from client and saves it to the DB
-     * Input JSON need to be as:
-     * {
-     * "recipient" : "<null|active user login>",
-     * "message": "<message>"
-     * }
-     *
-     * @param Request $request
-     * @return EmptyResponse if message is send successfully
-     * @throws HTTPException|JsonException 400 Bad Request if input has bad format or private message is sent to unactive user
-     * @throws \Exception
-     */
-    public function sendMessage(Request $request): Response
-    {
-        // parse input JSON
-        $jsonData = $request->json();
-
-        if (
-            is_object($jsonData) // an object is expected
-            && property_exists($jsonData, 'recipient') &&  property_exists($jsonData, 'message') // check if object has recipient and message attributes
-            && !empty($jsonData->message) // message attribute must not be empty
-        ) {
-            // create a new message
-            $message = new Message();
-            // set the logged user as the author of the message
-            $message->setAuthor($this->user->getName());
-            // if there is a recipient set, the message is private
-            if (!empty(trim($jsonData->recipient))) {
-                // private message can be sent only if recipient is active
-                if (!User::isActive($jsonData->recipient)) {
-                    // throw exception if recipient is inactive
-                    throw new HTTPException(400, 'The recipient is not available');
-                }
-                // set the recipient
-                $message->setRecipient($jsonData->recipient);
-            }
-            // set the rest of the message and save it
-            $message->setCreated(new \DateTime());
-            $message->setMessage($jsonData->message);
-            $message->save();
-
-            // there is no data to be sent to the client
-            return new EmptyResponse();
-        }
-        // throw out exception if validation fail
-        throw new HTTPException(400, 'Bad message structure');
-    }
-
-
-    /**
-     * This action receives a message from client and saves it to the DB
      *
      * Input JSON need to be as:
      * {
