@@ -53,9 +53,7 @@ class AuthController extends BaseController {
 
             // if not, create a new record
             if (empty($logged)) {
-                $newLogin = new User();
-                $newLogin->setLogin($jsonData->login);
-                $newLogin->setLastAction(new \DateTime());
+                $newLogin = new User($jsonData->login, new \DateTime());
                 $newLogin->save();
             } else {
                 // if yes, just update the last action time
@@ -77,7 +75,20 @@ class AuthController extends BaseController {
      */
     public function logout(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        // check, if the user is logged in
+        if ($this->user->isLoggedIn()) {
+            // if he is logged, we need his login record from DB
+            $logged = User::getOne($this->user->getName());
+
+            // if there is record in DB, delete it
+            if (!empty($logged)) {
+                $logged->delete();
+            }
+            // logout
+            $this->app->getAuthenticator()->logout();
+        }
+        // there is no data to be sent to the client
+        return new EmptyResponse();
     }
 
     /**
@@ -92,7 +103,15 @@ class AuthController extends BaseController {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function status() : JsonResponse {
-        throw new HTTPException(501,"Not Implemented");
+        // status is available only for logged users
+        if ($this->user->isLoggedIn()) {
+            // as a result send the current logged username
+            return $this->json([
+                'login' => $this->user->getName()
+            ]);
+        }
+        // send status code 401, if user is not logged in
+        throw new HTTPException(401);
     }
 
     /**
@@ -101,6 +120,12 @@ class AuthController extends BaseController {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function activeUsers() : JsonResponse {
-        throw new HTTPException(501,"Not Implemented");
+        // list of active users is available only for the logged user
+        if ($this->user->isLoggedIn()) {
+            // return the list
+            return $this->json(User::getAllActive());
+        }
+        // send status code 401, if user is not logged in
+        throw new HTTPException(401);
     }
 }

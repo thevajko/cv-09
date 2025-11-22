@@ -2,18 +2,18 @@
 
 namespace App\Auth;
 
+use App\Models\User;
 use Framework\Auth\DummyAuthenticator;
+use Framework\Core\IIdentity;
 
 class SimpleAuthenticator extends DummyAuthenticator
 {
-    public function login($username, $password): bool
+    protected function authenticate(string $username, string $password): ?IIdentity
     {
-        // user is logged in when login equals password
-        if ($username == $password) {
-            $_SESSION['user'] = $username;
-            return true;
-        } else {
-            return false;
+        // User is authenticated when username equals password (demo logic)
+        if ($username !== '' && $username === $password) {
+            return new User($username);
         }
+        return null;
     }
 }

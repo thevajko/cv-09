@@ -3,7 +3,6 @@
 namespace App;
 
 use App\Auth\SimpleAuthenticator;
-use Framework\Auth\DummyAuthenticator;
 use Framework\Core\ErrorHandler;
 use Framework\DB\DefaultConventions;
 
