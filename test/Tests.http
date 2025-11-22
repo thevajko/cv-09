@@ -88,7 +88,7 @@ Cookie: {{session}}
 ###
 # @name = logout - try to logout user1
 # try logout as user 1
-POST http://localhost:80/?c=authApi&a=logout
+POST http://localhost:80/?c=api/auth&a=logout
 Content-Type: application/json
 Accept: application/json
 
@@ -102,7 +102,7 @@ Accept: application/json
 
 ###
 # @name = status - check if user1 logout was successfull
-POST http://localhost:80/?c=authApi&a=status
+POST http://localhost:80/?c=api/auth&a=status
 Content-Type: application/json
 Accept: application/json
 
@@ -119,7 +119,7 @@ Accept: application/json
 ###
 # @name = login - test of relogin as user1
 # Try login as user 1
-POST http://localhost:80/?c=authApi&a=login
+POST http://localhost:80/?c=api/auth&a=login
 Content-Type: application/json
 Accept: application/json
 
@@ -139,7 +139,7 @@ Accept: application/json
 ###
 # @name = login - relogin as user3
 # Try login as user 3
-POST http://localhost:80/?c=authApi&a=login
+POST http://localhost:80/?c=api/auth&a=login
 Content-Type: application/json
 Accept: application/json
 
@@ -161,7 +161,7 @@ Accept: application/json
 
 ###
 # @name = status - check status if is user3 logged correctly
-POST http://localhost:80/?c=authApi&a=status
+POST http://localhost:80/?c=api/auth&a=status
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session}}
@@ -180,7 +180,7 @@ Cookie: {{session}}
 ###
 # @name = login - capture session1 for user1, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=login
+POST http://localhost:80/?c=api/auth&a=login
 Content-Type: application/json
 Accept: application/json
 
@@ -196,7 +196,7 @@ Accept: application/json
 ###
 # @name = login - capture session2 for user2, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=login
+POST http://localhost:80/?c=api/auth&a=login
 Content-Type: application/json
 Accept: application/json
 
@@ -212,7 +212,7 @@ Accept: application/json
 ###
 # @name = login - capture session3 for user3, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=login
+POST http://localhost:80/?c=api/auth&a=login
 Content-Type: application/json
 Accept: application/json
 
@@ -228,7 +228,7 @@ Accept: application/json
 ###
 # @name = status - test if cookie1 is for user1 session, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=status
+POST http://localhost:80/?c=api/auth&a=status
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -245,7 +245,7 @@ Cookie: {{session1}}
 ###
 # @name = status - test if cookie2 is for user2 session, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=status
+POST http://localhost:80/?c=api/auth&a=status
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session2}}
@@ -263,7 +263,7 @@ Cookie: {{session2}}
 # @name = receiveMessage - bad input message from user1 session, NO-COOKIE
 # Sending message with bad parameters
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=receiveMessage
+POST http://localhost:80/?c=api/message&a=receiveMessage
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -283,7 +283,7 @@ Cookie: {{session1}}
 ###
 # @name = receiveMessage - message from user1 session with bad values, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=receiveMessage
+POST http://localhost:80/?c=api/message&a=receiveMessage
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -319,7 +319,7 @@ Cookie: {{session1}}
 
 %}
 
-POST http://localhost:80/?c=messageApi&a=receiveMessage
+POST http://localhost:80/?c=api/message&a=receiveMessage
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session2}}
@@ -340,7 +340,7 @@ Cookie: {{session2}}
 ###
 # @name = receiveMessage - Try to send message not logged in, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=receiveMessage
+POST http://localhost:80/?c=api/message&a=receiveMessage
 Content-Type: application/json
 Accept: application/json
 Cookie:
@@ -360,7 +360,7 @@ Cookie:
 ###
 # @name = receiveMessage - Try to send message to not logged or inactive user, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=receiveMessage
+POST http://localhost:80/?c=api/message&a=receiveMessage
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -380,7 +380,7 @@ Cookie: {{session1}}
 ###
 # @name = receiveMessage - User 1 sending private message to user 2, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=receiveMessage
+POST http://localhost:80/?c=api/message&a=receiveMessage
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -400,7 +400,7 @@ Cookie: {{session1}}
 ###
 # @name = receiveMessage - Send another message for next tests user2, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=receiveMessage
+POST http://localhost:80/?c=api/message&a=receiveMessage
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session2}}
@@ -420,7 +420,7 @@ Cookie: {{session2}}
 ###
 # @name = receiveMessage - Send another message for next tests user1, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=receiveMessage
+POST http://localhost:80/?c=api/message&a=receiveMessage
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -440,7 +440,7 @@ Cookie: {{session1}}
 ###
 # @name = getMessages -  Get all messages for user 1 and check if message from the previous request was stored, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=getMessages
+POST http://localhost:80/?c=api/message&a=getMessages
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -473,7 +473,7 @@ Cookie: {{session1}}
 ###
 # @name = getMessages -  Get the last messages (a message after lastId)  for user 1, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=getMessages&lastId={{maxId-1}}
+POST http://localhost:80/?c=api/message&a=getMessages&lastId={{maxId-1}}
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -501,7 +501,7 @@ Cookie: {{session1}}
 ###
 # @name = getMessages - Get all messages for user 3 and check if there are private messages for other users, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=getMessages
+POST http://localhost:80/?c=api/message&a=getMessages
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session3}}
@@ -528,7 +528,7 @@ Cookie: {{session3}}
 ###
 # @name = getMessages -  Get all messages for user 2 and check if there are some recent private messages, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=messageApi&a=getMessages
+POST http://localhost:80/?c=api/message&a=getMessages
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session2}}
@@ -555,7 +555,7 @@ Cookie: {{session2}}
 ###
 #@name = activeUsers - Get control sum of all active user. Here must be count 3, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=activeUsers
+POST http://localhost:80/?c=api/auth&a=activeUsers
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session2}}
@@ -574,7 +574,7 @@ Cookie: {{session2}}
 ###
 #@name = logout - user 1, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=logout
+POST http://localhost:80/?c=api/auth&a=logout
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -590,7 +590,7 @@ Cookie: {{session1}}
 ###
 #@name = activeUsers - Check active users count after user1 logot, count should be 2, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=activeUsers
+POST http://localhost:80/?c=api/auth&a=activeUsers
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session2}}
@@ -609,7 +609,7 @@ Cookie: {{session2}}
 ###
 #@name =  login - Capturing first session id for active user testing, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=login
+POST http://localhost:80/?c=api/auth&a=login
 Content-Type: application/json
 Accept: application/json
 
@@ -625,7 +625,7 @@ Accept: application/json
 ###
 #@name = shiftActiveTimes - Shift are active logins 1 minute back, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=testApi&a=shiftActiveTimes&minutes=-1
+POST http://localhost:80/?c=api/test&a=shiftActiveTimes&minutes=-1
 Content-Type: application/json
 Accept: application/json
 
@@ -638,7 +638,7 @@ Accept: application/json
 ###
 #@name = activeUsers - Check active users count after shift there will be no one active, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=activeUsers
+POST http://localhost:80/?c=api/auth&a=activeUsers
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}
@@ -657,7 +657,7 @@ Cookie: {{session1}}
 ###
 #@name = shiftActiveTimes - Shift again but add 2 minutes, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=testApi&a=shiftActiveTimes&minutes=+2
+POST http://localhost:80/?c=api/test&a=shiftActiveTimes&minutes=+2
 Content-Type: application/json
 Accept: application/json
 
@@ -670,7 +670,7 @@ Accept: application/json
 ###
 #@name = activeUsers - Check active users count after adding 2 minutes, there should be non-zero active users, NO-COOKIE
 #@no-cookie-jar
-POST http://localhost:80/?c=authApi&a=activeUsers
+POST http://localhost:80/?c=api/auth&a=activeUsers
 Content-Type: application/json
 Accept: application/json
 Cookie: {{session1}}

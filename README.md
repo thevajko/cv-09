@@ -12,9 +12,8 @@ Momentálne je otvorená vetva __MASTER__, ktorá obsahuje _štartér_. Riešeni
 
 ### Jednoduchá práca s dátami vo formáte JSON vo frameworku Vaííčko
 
-1. Preštudujte si metódu `loopbackMessage()` v kontroléri `HomeController` a pohľad `loopbackMessage.view.php`. 
-Ako funguje posielanie a prijímanie dát? Ako framework vie, že boli dáta poslané pomocou AJAX volania?
-
+1. Preštudujte si metódu `loopbackMessage()` v kontroléri `HomeController` a pohľad `loopbackMessage.view.php`.
+   Ako funguje posielanie a prijímanie dát? Ako framework vie, že boli dáta poslané pomocou AJAX volania?
 
 ### Tvorba API pre chat aplikáciu
 
@@ -25,7 +24,9 @@ Preštudujte si súbory v štartéri. Štartér obsahuje Vaííčko framework. V
 potrebné pre tento projekt a naplní DB niekoľkými záznamami. Projekt obsahuje aj `SimpleAuthenticator` na jednoduché overenie mena a hesla. V projekte sa
 nachádzajú aj pripravené kontroléry `API\AuthController` a `API\MessageController`. V nich budete implementovať jednotlivé akcie.
 V projekte nájdeme tiež modely `User` a `Message`, ktoré zodpovedajú tabuľkám v DB. Všimnite si implementáciu metód `isActive()` a `getAllActive()` v
-triede `User`. Nakoniec si prezrite aj testy v súbore `\test\Tests.http`. Skúste ich spustiť. Úlohou cvičenia bude implementovať metódy kontrolérov tak,
+triede `User`.
+
+Nakoniec si prezrite testy v súbore `\test\Tests.http`. Skúste ich spustiť. 22 testov skončí chybou. Úlohou cvičenia bude implementovať metódy kontrolérov tak,
 aby všetky testy prebehli úspešne.
 
 1. `API\AuthController` - Má na starosti operácie týkajúce sa používateľa a vracia informácie o ňom. Obsahuje tieto už implementované akcie:
@@ -39,14 +40,15 @@ aby všetky testy prebehli úspešne.
       vždy vráti klientovi _empty response_.
     - `status` - Ak je používateľ prihlásený, klient dostane JSON odpoveď s objektom, ktorý obsahuje atribút `login` a má hodnotu aktuálne mena prihláseného
       používateľa. Neprihlásenému používateľovi vráti HTTP kód _401 Unauthorized_.
-    - `activeUsers` - Ak je používateľ prihlásený, klient dostane JSON odpoveď v podobe zoznamu používateľov (pole objektov typu `User`), ktorí sú aktívni. 
-    Aktívny používateľ je každý používateľ po dobu 30 sekúnd od poslednej žiadosti o získanie správ. Pokiaľ žiadnych aktívnych používateľov nenájde, vráti prázdne
-      pole. Ak je používateľ neprihlásený, vráti HTTP kód _401 Unauthorized_.
+    - `activeUsers` - Ak je používateľ prihlásený, klient dostane JSON odpoveď v podobe zoznamu používateľov (pole objektov typu `User`), ktorí sú aktívni.
+      Aktívny používateľ je každý používateľ po dobu 30 sekúnd od poslednej žiadosti o získanie správ. Pokiaľ žiadnych aktívnych používateľov nenájde, vráti
+      prázdne pole. Ak je používateľ neprihlásený, vráti HTTP kód _401 Unauthorized_.
 
 2. `API\MessageController` - Poskytuje API pre odosielanie a získavanie správ. Všetky akcie tohto kontroléra sú určené iba pre prihlásených používateľov.
    Obsahuje tieto už implementované akcie:
     - `index` - Keďže sa jedná o API, index bude vracať HTTP kód _501 Not Implemented_.
-    - `receiveMessage` - Očakáva odoslanie správy s dvoma povinnými atribútmi: `recipient` a `message`. Ak ich objekt neobsahuje, klientovi sa zašle HTTP odpoveď
+    - `receiveMessage` - Očakáva odoslanie správy s dvoma povinnými atribútmi: `recipient` a `message`. Ak ich objekt neobsahuje, klientovi sa zašle HTTP
+      odpoveď
       _400 Bad Request_. Ďalšie podrobnosti:
         * Atribút `recipient` obsahuje `null`, ak je správa verejná. Ak je správa privátna, tento atribút obsahuje login používateľa, komu je určená.
         * Atribút `message` nesmie obsahovať prázdnu hodnotu.
