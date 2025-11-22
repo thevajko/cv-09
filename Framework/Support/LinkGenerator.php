@@ -64,10 +64,11 @@ class LinkGenerator
      */
     public function url(
         string|array $destination,
-        array $parameters = [],
-        bool $absolute = false,
-        bool $appendParameters = false
-    ): string {
+        array        $parameters = [],
+        bool         $absolute = false,
+        bool         $appendParameters = false
+    ): string
+    {
         // If destination is an array, set parameters accordingly
         if (is_array($destination)) {
             if ($parameters != []) {
@@ -83,21 +84,47 @@ class LinkGenerator
 
         // If destination does not specify a controller, assume current controller
         if (!str_contains($destination, ".")) {
-            $destination = "{$this->router->getControllerName()}.{$destination}";
+            $destination = "{$this->router->getControllerName()}.$destination";
         }
 
-        // Split the destination into controller and action
-        list($controller, $action) = explode(".", $destination);
+        $parts = array_values(array_filter(explode('.', $destination), static fn($part) => $part !== ''));
+        if (count($parts) === 1) {
+            array_unshift($parts, $this->router->getControllerName());
+        }
+
+        $action = array_pop($parts);
+        $controllerSegments = $parts ?: [$this->router->getControllerName()];
+        $controller = $this->buildControllerQueryValue($controllerSegments);
 
         // Build query arguments
         $args = $appendParameters ? $this->request->get() : [];
-        $args = ["c" => lcfirst($controller), "a" => $action != "index" ? $action : null] + $parameters + $args;
+        $args = ["c" => $controller, "a" => $action != "index" ? $action : null] + $parameters + $args;
 
         // Determine the base URL
         $basePath = $absolute ? $this->request->getBaseUrl() : "";
 
         // Construct and return the final URL
         return $basePath . "?" . http_build_query($args);
+    }
+
+    /**
+     * Builds the controller part of the query string from the given segments.
+     *
+     * This method normalizes the controller segments by trimming whitespace and converting
+     * the first character of each segment to lowercase. It then joins the segments with
+     * slashes to form the controller path used in the URL.
+     *
+     * @param array $segments The segments representing the controller path.
+     * @return string The normalized controller path for the query string.
+     */
+    private function buildControllerQueryValue(array $segments): string
+    {
+        $normalized = array_map(
+            static fn($segment) => lcfirst(trim((string)$segment)),
+            array_filter($segments, static fn($segment) => trim((string)$segment) !== '')
+        );
+
+        return implode('/', $normalized ?: [$this->router->getControllerName()]);
     }
 
     /**
