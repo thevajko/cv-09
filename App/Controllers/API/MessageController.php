@@ -42,7 +42,6 @@ class MessageController extends BaseController
 
     /**
      * This action receives a message from client and saves it to the DB
-     *
      * Input JSON need to be as:
      * {
      * "recipient" : "<null|active user login>",
@@ -51,10 +50,10 @@ class MessageController extends BaseController
      *
      * @param Request $request
      * @return EmptyResponse if message is send successfully
-     * @throws HTTPException|JsonException 400 Bad Request if input has bad format or private message is
+     * @throws HTTPException|JsonException 400 Bad Request if input has bad format or private message is sent to unactive user
      * @throws \Exception
      */
-    public function receiveMessage(Request $request) : Response
+    public function sendMessage(Request $request): Response
     {
         // parse input JSON
         $jsonData = $request->json();
@@ -90,5 +89,83 @@ class MessageController extends BaseController
         throw new HTTPException(400, 'Bad message structure');
     }
 
+
+    /**
+     * This action receives a message from client and saves it to the DB
+     *
+     * Input JSON need to be as:
+     * {
+     * "recipient" : "<null|active user login>",
+     * "message": "<message>"
+     * }
+     *
+     * @param Request $request
+     * @return EmptyResponse if message is send successfully
+     * @throws HTTPException|JsonException 400 Bad Request if input has bad format or private message is
+     * @throws \Exception
+     */
+    public function receiveMessage(Request $request) : Response
+    {
+        // parse input JSON
+        $jsonData = $request->json();
+
+        if (
+            is_object($jsonData) // an object is expected
+            && property_exists($jsonData, 'recipient') &&  property_exists($jsonData, 'message') // check if object has recipient and message attributes
+            && !empty($jsonData->message) // message attribute must not be empty
+        ) {
+            // create a new message
+            $message = new Message();
+            // set the logged user as the author of the message
+            $message->setAuthor($this->user->getName());
+            // if there is a recipient set, the message is private
+            if (!empty($jsonData->recipient)) {
+                // private message can be sent only if recipient is active
+                if (!User::isActive($jsonData->recipient)) {
+                    // throw exception if recipient is inactive
+                    throw new HTTPException(400, 'The recipient is not available');
+                }
+                // set the recipient
+                $message->setRecipient($jsonData->recipient);
+            }
+            // set the rest of the message and save it
+            $message->setCreated(new \DateTime());
+            $message->setMessage($jsonData->message);
+            $message->save();
+
+            // there is no data to be sent to the client
+            return new EmptyResponse();
+        }
+        // throw out exception if validation fail
+        throw new HTTPException(400, 'Bad message structure');
+    }
+
+    /**
+     * The action returns an array of messages that can logged user receive.
+     *
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function getAllMessages(Request $request): Response
+    {
+        // get lastId parameter, if exists
+        $lastId = $request->value("lastId") ?? 0;
+
+
+        // get all messages, where user is the recipient or the author
+        $messages = Message::getAll("id >= ? AND (recipient is NULL OR recipient = ? OR author = ?)", [
+            $lastId,
+            $this->user->getName(),
+            $this->user->getName()
+        ]);
+
+        // update datetime of last action for the author
+        $author = User::getOne($this->user->getName());
+        $author->setLastAction(new \DateTime());
+        $author->save();
+
+        return $this->json($messages); // send messages to the client
+    }
 
 }
