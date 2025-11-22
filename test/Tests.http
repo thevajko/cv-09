@@ -1,0 +1,687 @@
+###
+# @name = login - no right parameters
+# Try to login without any parameters
+< {%
+
+    // setup global value for login
+    client.global.set("login1", "matko");
+    client.global.set("login2", "kubko");
+    client.global.set("login3", "avatar");
+
+%}
+
+POST http://localhost:80/?c=api/auth&a=login
+Content-Type: application/json
+Accept: application/json
+
+"asdasasd"
+
+> {%
+    client.test("Try login without parameters", function () {
+        client.assert(response.status == 400, "Request does not contain required parameters")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+    })
+
+%}
+
+###
+# login with correct parameters but not with right values
+# @name = login - right parameters bad values
+POST http://localhost:80/?c=api/auth&a=login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "login"    : "{{login1}}",
+  "password" : "{{login1}}aa"
+}
+
+> {%
+    client.test("Incorrect login parameters", function () {
+        client.assert(response.status == 400, "Required attributes not present in the request")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+    })
+
+%}
+
+###
+# @name = login - correct values
+# Try login as user 1
+POST http://localhost:80/?c=api/auth&a=login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "login"    : "{{login1}}",
+  "password" : "{{login1}}"
+}
+
+> {%
+
+    client.global.set("session", response.headers.valuesOf("Set-Cookie")[0]);
+
+    client.test("Correct login parameters", function () {
+        client.assert(response.status == 204, "Login response is not 204")
+        client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
+    })
+
+%}
+
+###
+# @name = status - user1 should be logged in
+# check status if logged correctly
+POST http://localhost:80/?c=api/auth&a=status
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session}}
+
+> {%
+    client.test("Check logged status", function () {
+        client.assert(response.status == 200, "Response is not 200 Ok")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+        client.assert(response.body.login === client.global.get("login1"), "User is not logged correctly.")
+
+    })
+
+%}
+
+###
+# @name = logout - try to logout user1
+# try logout as user 1
+POST http://localhost:80/?c=authApi&a=logout
+Content-Type: application/json
+Accept: application/json
+
+> {%
+    client.test("Do logout", function () {
+        client.assert(response.status == 204, "Response is not 204 - No content")
+        client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
+    })
+
+%}
+
+###
+# @name = status - check if user1 logout was successfull
+POST http://localhost:80/?c=authApi&a=status
+Content-Type: application/json
+Accept: application/json
+
+
+> {%
+    client.test("Check logged status", function () {
+        client.assert(response.status == 401, "There should be a 401 error that user is not logged in")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+
+    })
+
+%}
+
+###
+# @name = login - test of relogin as user1
+# Try login as user 1
+POST http://localhost:80/?c=authApi&a=login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "login"    : "{{login1}}",
+  "password" : "{{login1}}"
+}
+
+> {%
+    client.test("Login with the correct values", function () {
+        client.assert(response.status == 204, "Login response is not 200 Ok")
+        client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
+    })
+
+%}
+
+###
+# @name = login - relogin as user3
+# Try login as user 3
+POST http://localhost:80/?c=authApi&a=login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "login"    : "{{login3}}",
+  "password" : "{{login3}}"
+}
+
+> {%
+
+    client.global.set("session", response.headers.valuesOf("Set-Cookie")[0]);
+
+    client.test("Login with the correct values", function () {
+        client.assert(response.status == 204, "Login response is not 204 No content")
+        client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
+    })
+
+%}
+
+###
+# @name = status - check status if is user3 logged correctly
+POST http://localhost:80/?c=authApi&a=status
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session}}
+
+> {%
+    client.test("Check logged status", function () {
+        client.assert(response.status == 200, "Response is not 200 Ok")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+        client.assert(response.body.login === client.global.get("login3"), "User is not logged correctly")
+
+    })
+
+    // !!!!!!!!!!!!!!!! test of relogin as other user
+%}
+
+###
+# @name = login - capture session1 for user1, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "login"    : "{{login1}}",
+  "password" : "{{login1}}"
+}
+
+> {%
+    client.global.set("session1", response.headers.valuesOf("Set-Cookie")[0]);
+%}
+
+###
+# @name = login - capture session2 for user2, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "login"    : "{{login2}}",
+  "password" : "{{login2}}"
+}
+
+> {%
+    client.global.set("session2", response.headers.valuesOf("Set-Cookie")[0]);
+%}
+
+###
+# @name = login - capture session3 for user3, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "login"    : "{{login3}}",
+  "password" : "{{login3}}"
+}
+
+> {%
+    client.global.set("session3", response.headers.valuesOf("Set-Cookie")[0]);
+%}
+
+###
+# @name = status - test if cookie1 is for user1 session, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=status
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+> {%
+    client.test("Check status of the logged user in session 1", function () {
+        client.assert(response.status == 200, "There is not 200 status in response")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+        client.assert(response.body.login == client.global.get("login1"), "There is  login value in session 1")
+    })
+
+%}
+
+###
+# @name = status - test if cookie2 is for user2 session, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=status
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session2}}
+
+> {%
+    client.test("Check status of the logged user in session 2", function () {
+        client.assert(response.status == 200, "There is not 200 status in response")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+        client.assert(response.body.login == client.global.get("login2"), "There is  login value in session 1")
+    })
+
+%}
+
+###
+# @name = receiveMessage - bad input message from user1 session, NO-COOKIE
+# Sending message with bad parameters
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=receiveMessage
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+{
+  "tox": null,
+  "mesxsage": "The test message"
+}
+
+> {%
+    client.test("Bad format of the message", function () {
+        client.assert(response.status == 400, "Response is not 400 code")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+    })
+%}
+
+###
+# @name = receiveMessage - message from user1 session with bad values, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=receiveMessage
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+{
+  "to": null,
+  "message": null
+}
+
+> {%
+    client.test("Bad format of the message", function () {
+        client.assert(response.status == 400, "Response is not 400 code")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+    })
+%}
+
+###
+# @name = receiveMessage - public message with randomly generated text user2 session, NO-COOKIE
+#@no-cookie-jar
+< {%
+    function generateString(length) {
+        let result = '';
+        let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+
+        return result;
+    }
+
+    client.global.set("random", generateString(20));
+
+%}
+
+POST http://localhost:80/?c=messageApi&a=receiveMessage
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session2}}
+
+{
+  "recipient" : null,
+  "message": "{{random}}"
+}
+
+> {%
+    client.test("User sends a public message", function () {
+        client.assert(response.status == 204, "There is not 204 status in response")
+        client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
+    })
+%}
+
+
+###
+# @name = receiveMessage - Try to send message not logged in, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=receiveMessage
+Content-Type: application/json
+Accept: application/json
+Cookie:
+
+{
+  "recipient" : null,
+  "message": "{{random}}"
+}
+
+> {%
+    client.test("Send a message by not logged user", function () {
+        client.assert(response.status == 401, "Unauthorized user can't send message to chat")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+    })
+%}
+
+###
+# @name = receiveMessage - Try to send message to not logged or inactive user, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=receiveMessage
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+{
+  "recipient" : "totlaka_nie_tam",
+  "message": "{{random}}"
+}
+
+> {%
+    client.test("Send a message by not logged user", function () {
+        client.assert(response.status == 400, "Bad return code")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+    })
+%}
+
+###
+# @name = receiveMessage - User 1 sending private message to user 2, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=receiveMessage
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+{
+  "recipient" : "{{login2}}",
+  "message": "{{random}}"
+}
+
+> {%
+    client.test("User 1 sends private message to user 2", function () {
+        client.assert(response.status == 204, "There is not 204 status in response")
+        client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
+    })
+%}
+
+###
+# @name = receiveMessage - Send another message for next tests user2, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=receiveMessage
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session2}}
+
+{
+  "recipient" : "{{login3}}",
+  "message": "test message from {{login2}}"
+}
+
+> {%
+    client.test("Send a message for another test", function () {
+        client.assert(response.status == 204, "There is not 204 status in response")
+        client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
+    })
+%}
+
+###
+# @name = receiveMessage - Send another message for next tests user1, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=receiveMessage
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+{
+  "recipient" : null,
+  "message": "Public test message from {{login1}}"
+}
+
+> {%
+    client.test("User 1 sends a private message to another user", function () {
+        client.assert(response.status == 204, "There is not 204 status in response")
+        client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
+    })
+%}
+
+###
+# @name = getMessages -  Get all messages for user 1 and check if message from the previous request was stored, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=getMessages
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+
+> {%
+    client.test("Get all messages", function () {
+        client.assert(response.status == 200, "There is not 200 status in response")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+
+        // there should be at last one message stored on the server:
+        client.assert(response.body.length > 0, "No messages sent from server. There must be at least one.")
+
+        let maxMsgId = 0;
+        let found = false;
+        response.body.forEach(msg => {
+            if (msg.message == client.global.get("random")) {
+                found = true;
+            }
+            if (msg.id > maxMsgId) {
+                maxMsgId = msg.id;
+            }
+        });
+        client.assert(found, "Test message was not returned by server");
+        client.global.set("maxId", maxMsgId);
+        client.global.set("maxId-1", maxMsgId-1);
+    })
+%}
+
+###
+# @name = getMessages -  Get the last messages (a message after lastId)  for user 1, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=getMessages&lastId={{maxId-1}}
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+
+> {%
+    client.test("Get all messages", function () {
+        client.assert(response.status == 200, "There is not 200 status in response")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+
+        // there should be at least one message stored on the server:
+        client.assert(response.body.length > 0, "No messages sent from server. There must be at least one.")
+
+        let notFound = true;
+        response.body.forEach(msg => {
+            if (msg.id == client.global.get("maxId-1")) {
+                notFound = false;
+            }
+        });
+        client.assert(notFound, "Message filter with last id does not work");
+
+    })
+%}
+
+###
+# @name = getMessages - Get all messages for user 3 and check if there are private messages for other users, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=getMessages
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session3}}
+
+
+> {%
+    client.test("Get all messages", function () {
+        client.assert(response.status == 200, "There is not 200 status in response")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+
+        // there should be at last one message stored on the server:
+        client.assert(response.body.length > 0, "No messages sent from server. There must be at least one.")
+
+        let found = false;
+        response.body.forEach(msg => {
+            if (msg.recipient != client.global.get("login3") || msg.recipient != null) {
+                found = true;
+            }
+        });
+        client.assert(found, "There are private messages for other users in response.")
+    })
+%}
+
+###
+# @name = getMessages -  Get all messages for user 2 and check if there are some recent private messages, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=messageApi&a=getMessages
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session2}}
+
+
+> {%
+    client.test("Get all messages", function () {
+        client.assert(response.status == 200, "There is not 200 status in response")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+
+        // there should be at last one message stored on the server:
+        client.assert(response.body.length > 0, "No messages sent from server. There must be at least one.")
+
+        let found = false;
+        response.body.forEach(msg => {
+            if (msg.message == client.global.get("random") && msg.recipient == client.global.get("login2") && msg.author == client.global.get("login1")) {
+                found = true;
+            }
+        });
+        client.assert(found, "Test message was not returned by server")
+    })
+%}
+
+###
+#@name = activeUsers - Get control sum of all active user. Here must be count 3, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=activeUsers
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session2}}
+
+
+> {%
+    client.test("Get all messages", function () {
+        client.assert(response.status == 200, "There is not 200 status in response")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+
+        client.global.set("activeCount", response.body.length);
+
+    })
+%}
+
+###
+#@name = logout - user 1, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=logout
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+> {%
+    client.test("Do logout", function () {
+        client.assert(response.status == 204, "Response is not 204 - No content")
+        client.assert(response.contentType.mimeType === "text/plain", "Expected 'text/plain' but received '" + response.contentType.mimeType + "'");
+    })
+
+%}
+
+###
+#@name = activeUsers - Check active users count after user1 logot, count should be 2, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=activeUsers
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session2}}
+
+
+> {%
+    client.test("Get all messages", function () {
+        client.assert(response.status == 200, "There is not 200 status in response")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+
+        client.assert(client.global.get("activeCount") > response.body.length, "There is no change in active user count after one user logged out")
+
+    })
+%}
+
+###
+#@name =  login - Capturing first session id for active user testing, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "login"    : "{{login1}}",
+  "password" : "{{login1}}"
+}
+
+> {%
+    client.global.set("session1", response.headers.valuesOf("Set-Cookie")[0]);
+%}
+
+###
+#@name = shiftActiveTimes - Shift are active logins 1 minute back, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=testApi&a=shiftActiveTimes&minutes=-1
+Content-Type: application/json
+Accept: application/json
+
+> {%
+    client.test("Do logout", function () {
+        client.assert(response.status == 204, "Response is not 204 No content")
+    })
+%}
+
+###
+#@name = activeUsers - Check active users count after shift there will be no one active, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=activeUsers
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+
+> {%
+    client.test("Get all messages", function () {
+        client.assert(response.status == 200, "There is not 200 status in response")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+
+        client.assert(response.body.length == 0, "There is no change in active user count after one user logged out")
+
+    })
+%}
+
+###
+#@name = shiftActiveTimes - Shift again but add 2 minutes, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=testApi&a=shiftActiveTimes&minutes=+2
+Content-Type: application/json
+Accept: application/json
+
+> {%
+    client.test("Do logout", function () {
+        client.assert(response.status == 204, "Response is not 204 No content")
+    })
+%}
+
+###
+#@name = activeUsers - Check active users count after adding 2 minutes, there should be non-zero active users, NO-COOKIE
+#@no-cookie-jar
+POST http://localhost:80/?c=authApi&a=activeUsers
+Content-Type: application/json
+Accept: application/json
+Cookie: {{session1}}
+
+
+> {%
+    client.test("Get all messages", function () {
+        client.assert(response.status == 200, "There is not 200 status in response")
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json' but received '" + response.contentType.mimeType + "'");
+
+        client.assert(response.body.length > 0, "There is no change in active user count after one user logged out")
+
+    })
+%}

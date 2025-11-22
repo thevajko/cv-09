@@ -54,4 +54,14 @@ class HomeController extends BaseController
     {
         return $this->html();
     }
+
+    public function loopbackMessage(Request $request): Response
+    {
+        if ($request->isAjax()) {
+            return $this->json($request->json());
+        } else {
+            return $this->html();
+        }
+    }
+
 }
