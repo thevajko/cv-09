@@ -75,7 +75,13 @@ class AuthController extends BaseController {
      */
     public function logout(): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->user->isLoggedIn()) {
+            $user = User::getOne($this->user->getName());
+            $user->setLastAction((new \DateTime())->modify('-30 seconds')); // set last action time to 5 minutes ago
+            $user->save();
+            $this->app->getAuthenticator()->logout();
+        }
+        return new EmptyResponse();
     }
 
     /**
@@ -90,7 +96,10 @@ class AuthController extends BaseController {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function status() : JsonResponse {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->user->isLoggedIn()) {
+            return new JsonResponse(['login' => $this->user->getName()]);
+        }
+        throw new HTTPException(401,"Unauthorized");
     }
 
     /**
@@ -99,6 +108,10 @@ class AuthController extends BaseController {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function activeUsers() : JsonResponse {
-        throw new HTTPException(501,"Not Implemented");
+        if ($this->user->isLoggedIn()) {
+            $activeUsers = User::getAllActive();
+            return new JsonResponse($activeUsers);
+        }
+        throw new HTTPException(401,"Unauthorized");
     }
 }

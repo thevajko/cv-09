@@ -69,7 +69,7 @@ class MessageController extends BaseController
             // set the logged user as the author of the message
             $message->setAuthor($this->user->getName());
             // if there is a recipient set, the message is private
-            if (!empty(trim($jsonData->recipient))) {
+            if (!empty(trim($jsonData->recipient ?? ""))) {
                 // private message can be sent only if recipient is active
                 if (!User::isActive($jsonData->recipient)) {
                     // throw exception if recipient is inactive
@@ -99,7 +99,19 @@ class MessageController extends BaseController
      */
     public function getAllMessages(Request $request): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        $user = User::getOne($this->user->getName());
+        $user->setLastAction(new \DateTime());
+        $user->save();
+
+        $lastId = intval($request->value('lastId') ?? 0);
+
+        // get all messages from DB
+        $allMessages = Message::getAll(
+            "id > :id AND (recipient IS NULL OR recipient = :name OR author = :name)",
+            [":id" => $lastId, ":name" => $this->user->getName()],
+            "created ASC"
+        );
+        return $this->json($allMessages);
     }
 
 }

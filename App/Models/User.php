@@ -71,7 +71,7 @@ class User extends Model implements IIdentity
 
     /**
      * Return all active users
-     * @return array
+     * @return User[]
      * @throws \Exception
      */
     public static function getAllActive(): array
