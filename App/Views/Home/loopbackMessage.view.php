@@ -10,7 +10,9 @@
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify(message)
-            }).then(response => response.json()).then(data => {
+            })
+            .then(response => response.json())
+            .then(data => {
                 document.getElementById('result').innerHTML = `Autor: ${data.author} <br>Recipient: ${data.recipient} <br>Message: ${data.message}`
             }).catch((error) => {
                 document.getElementById('result').innerText = 'Error: ' + error

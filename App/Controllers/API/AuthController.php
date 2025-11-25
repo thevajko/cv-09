@@ -90,7 +90,14 @@ class AuthController extends BaseController {
      * @throws HTTPException 401 Unauthorized -  if user is not logged in
      */
     public function status() : JsonResponse {
-        throw new HTTPException(501,"Not Implemented");
+
+        if ($this->app->getAppUser()->isLoggedIn() ){
+            $o = new \stdClass();
+            $o->login = $this->app->getAppUser()->getName();
+            return $this->json($o);
+        }
+
+        throw new HTTPException(401,"Not Implemented");
     }
 
     /**
