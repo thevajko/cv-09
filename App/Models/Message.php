@@ -8,7 +8,7 @@ use Framework\Core\Model;
 
 class Message extends Model
 {
-    protected null|int $id = null;
+    protected ?int $id = null;
     protected string $author;
     protected ?string $recipient;
     protected ?string $created;

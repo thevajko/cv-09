@@ -4,9 +4,10 @@ namespace App\Auth;
 
 use App\Models\User;
 use Framework\Auth\DummyAuthenticator;
+use Framework\Auth\SessionAuthenticator;
 use Framework\Core\IIdentity;
 
-class SimpleAuthenticator extends DummyAuthenticator
+class SimpleAuthenticator extends SessionAuthenticator
 {
     protected function authenticate(string $username, string $password): ?IIdentity
     {

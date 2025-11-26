@@ -3,7 +3,7 @@
 
     window.onload = () => {
         document.getElementById('sendJson').onclick = () => {
-            fetch('http://localhost/?c=Home&a=loopbackMessage', {
+            fetch('/?c=Home&a=loopbackMessage', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

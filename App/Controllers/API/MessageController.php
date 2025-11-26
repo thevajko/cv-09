@@ -58,7 +58,6 @@ class MessageController extends BaseController
     {
         // parse input JSON
         $jsonData = $request->json();
-
         if (
             is_object($jsonData) // an object is expected
             && property_exists($jsonData, 'recipient') &&  property_exists($jsonData, 'message') // check if object has recipient and message attributes
@@ -69,7 +68,7 @@ class MessageController extends BaseController
             // set the logged user as the author of the message
             $message->setAuthor($this->user->getName());
             // if there is a recipient set, the message is private
-            if (!empty(trim($jsonData->recipient))) {
+            if (!empty(trim($jsonData->recipient ?? ''))) {
                 // private message can be sent only if recipient is active
                 if (!User::isActive($jsonData->recipient)) {
                     // throw exception if recipient is inactive
@@ -99,7 +98,14 @@ class MessageController extends BaseController
      */
     public function getAllMessages(Request $request): Response
     {
-        throw new HTTPException(501,"Not Implemented");
+        $lastId = $request->value('lastId') ?? 0;
+        $messages = Message::getAll(
+            'id > :id AND (recipient IS NULL OR recipient = :user OR author = :user)',
+            [':id' => $lastId, ':user' => $this->user->getName()],
+            'created ASC');
+
+        // return the messages as JSON
+        return $this->json($messages);
     }
 
 }
